@@ -96,7 +96,7 @@
     .toast.error{ border-color: rgba(255, 107, 107, 0.55); box-shadow: 0 0 16px rgba(255,107,107,0.35), inset 0 0 20px rgba(255,107,107,0.12) }
     .toast.show{ opacity:1; transform: translateX(-50%) translateY(0) }
 
-    /* HTML currency result area */
+    /* Currency (HTML) */
     .rate-box{
       background: rgba(255,255,255,0.05);
       border:1px solid rgba(255,255,255,0.12);
@@ -299,7 +299,7 @@
         </div>
       </div>
 
-      <!-- CURRENCY CONVERTER — HTML ONLY (replaces embedded webapp) -->
+      <!-- CURRENCY CONVERTER — HTML ONLY -->
       <div id="pane-currency" class="card pane">
         <div class="grid">
           <div>
@@ -334,7 +334,7 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <!-- App logic (non-module) -->
   <script>
     // CONFIG — Apps Script for form + AI tools
     const GAS_WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
@@ -569,36 +569,49 @@
     ccAmount.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); convertNow(); } });
     ccFrom.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
     ccTo.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
+  </script>
 
-    // Starfield background
-    (()=>{
-      const canvas = document.getElementById('bg');
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight);
-      camera.position.z = 60;
+  <!-- Three.js: ES Module (fixes deprecation) -->
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 
-      const isMobile = innerWidth < 640, starCount = isMobile ? 1200 : 2400;
-      const geometry = new THREE.BufferGeometry(); const positions = new Float32Array(starCount*3);
-      for(let i=0;i<starCount;i++){
-        const r = 200*Math.cbrt(Math.random()), t = Math.random()*2*Math.PI, p = Math.acos(2*Math.random()-1);
-        positions[i*3] = r*Math.sin(p)*Math.cos(t);
-        positions[i*3+1]= r*Math.sin(p)*Math.sin(t);
-        positions[i*3+2]= r*Math.cos(p);
-      }
-      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const material = new THREE.PointsMaterial({ color:0xbfe9ff, size:0.9, sizeAttenuation:true, transparent:true, opacity:.9, blending:THREE.AdditiveBlending });
-      const stars = new THREE.Points(geometry, material);
-      scene.add(stars);
-      scene.fog = new THREE.FogExp2(0x0b1020, 0.0025);
+    const canvas = document.getElementById('bg');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    camera.position.z = 60;
 
-      const animate=()=>{ requestAnimationFrame(animate); stars.rotation.y += 0.0008; stars.rotation.x -= 0.0002; renderer.render(scene, camera) };
-      animate();
+    const isMobile = innerWidth < 640;
+    const starCount = isMobile ? 1200 : 2400;
 
-      addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight) }, {passive:true});
-    })();
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(starCount*3);
+    for(let i=0;i<starCount;i++){
+      const r = 200*Math.cbrt(Math.random());
+      const t = Math.random()*2*Math.PI;
+      const p = Math.acos(2*Math.random()-1);
+      positions[i*3]   = r*Math.sin(p)*Math.cos(t);
+      positions[i*3+1] = r*Math.sin(p)*Math.sin(t);
+      positions[i*3+2] = r*Math.cos(p);
+    }
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const material = new THREE.PointsMaterial({
+      color:0xbfe9ff, size:0.9, sizeAttenuation:true, transparent:true, opacity:.9
+    });
+
+    const stars = new THREE.Points(geometry, material);
+    scene.add(stars);
+    scene.fog = new THREE.FogExp2(0x0b1020, 0.0025);
+
+    const animate=()=>{ requestAnimationFrame(animate); stars.rotation.y += 0.0008; stars.rotation.x -= 0.0002; renderer.render(scene, camera) };
+    animate();
+
+    addEventListener('resize', ()=>{
+      camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight)
+    }, {passive:true});
   </script>
 </body>
 </html>
-```
