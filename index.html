@@ -96,14 +96,21 @@
     .toast.error{ border-color: rgba(255, 107, 107, 0.55); box-shadow: 0 0 16px rgba(255,107,107,0.35), inset 0 0 20px rgba(255,107,107,0.12) }
     .toast.show{ opacity:1; transform: translateX(-50%) translateY(0) }
 
-    /* Currency iframe wrapper */
-    .iframe-wrap{ position:relative; width:100%; height:70vh; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.04) }
-    .iframe-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; background:#fff }
+    /* HTML currency result area */
+    .rate-box{
+      background: rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 14px;
+      line-height: 1.5;
+      min-height: 72px;
+    }
+    .rate-main{ font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+    .rate-sub{ color: var(--muted); font-size: .92rem; }
 
     @media (max-width: 900px){
       .grid{ grid-template-columns:1fr }
       .wrap{ padding:20px 12px }
-      .iframe-wrap{ height:72vh }
     }
   </style>
 </head>
@@ -292,17 +299,33 @@
         </div>
       </div>
 
-      <!-- CURRENCY CONVERTER (embedded) -->
+      <!-- CURRENCY CONVERTER — HTML ONLY (replaces embedded webapp) -->
       <div id="pane-currency" class="card pane">
-        <div class="actions" style="justify-content:space-between;margin-top:0;padding-top:0;">
-          <div class="hint">Currency converter is embedded below.</div>
-          <div style="display:flex;gap:10px;">
-            <a id="currencyOpen" class="btn btn-outline" target="_blank" rel="noopener">Open Full Page</a>
-            <button id="currencyReload" class="btn btn-ghost" type="button">Reload</button>
+        <div class="grid">
+          <div>
+            <label for="ccAmount">Amount / رقم</label>
+            <input id="ccAmount" type="number" min="0" step="0.01" placeholder="e.g., 100" value="100" />
+          </div>
+          <div>
+            <label for="ccFrom">Source currency / سورس کرنسی</label>
+            <select id="ccFrom"></select>
+          </div>
+          <div>
+            <label for="ccTo">Target currency / مطلوبہ کرنسی</label>
+            <select id="ccTo"></select>
+          </div>
+          <div class="full rate-box">
+            <div id="ccResult" class="rate-main">Enter amount and convert.</div>
+            <div id="ccRateInfo" class="rate-sub"></div>
           </div>
         </div>
-        <div class="iframe-wrap">
-          <iframe id="currencyFrame" title="Currency Converter"></iframe>
+        <div class="actions" style="justify-content:space-between;">
+          <div>
+            <button id="ccConvert" class="btn btn-primary" type="button">Convert</button>
+            <button id="ccSwap" class="btn btn-outline" type="button">Swap</button>
+            <button id="ccClear" class="btn btn-ghost" type="button">Clear</button>
+          </div>
+          <div class="hint">Live rates via exchangerate.host — pure HTML + JS</div>
         </div>
       </div>
 
@@ -313,9 +336,8 @@
 
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
   <script>
-    // CONFIG — your provided URLs
+    // CONFIG — Apps Script for form + AI tools
     const GAS_WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
-    const CURRENCY_URL     = "https://script.google.com/macros/s/AKfycbyJDrHASnuVtQDJyipQY2gS9v08YlBTNohGm5zdz4R5cw_i_XgMcsKw2-vdiNv4Kqqm/exec";
 
     // Tabs logic
     const tabs = document.querySelectorAll('.tab-btn');
@@ -333,7 +355,6 @@
         tabs.forEach(b=>b.classList.remove('active')); btn.classList.add('active');
         Object.values(panes).forEach(p=>p.classList.remove('active'));
         panes[btn.dataset.tab].classList.add('active');
-        // Small scroll adjust for mobile
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
@@ -457,13 +478,97 @@
       e.target.value = '';
     });
 
-    // Currency iframe controls
-    const currencyFrame = document.getElementById('currencyFrame');
-    const currencyOpen = document.getElementById('currencyOpen');
-    const currencyReload = document.getElementById('currencyReload');
-    currencyFrame.src = CURRENCY_URL;
-    currencyOpen.href = CURRENCY_URL;
-    currencyReload.addEventListener('click', ()=>{ currencyFrame.src = CURRENCY_URL; showToast('Currency reloaded'); });
+    // Currency converter (HTML-based, 20+ currencies)
+    const currencyList = [
+      ['USD','US Dollar'], ['PKR','Pakistani Rupee'], ['EUR','Euro'], ['GBP','British Pound'],
+      ['INR','Indian Rupee'], ['AED','UAE Dirham'], ['SAR','Saudi Riyal'], ['AUD','Australian Dollar'],
+      ['CAD','Canadian Dollar'], ['CNY','Chinese Yuan'], ['JPY','Japanese Yen'], ['TRY','Turkish Lira'],
+      ['BDT','Bangladeshi Taka'], ['LKR','Sri Lankan Rupee'], ['NPR','Nepalese Rupee'], ['MYR','Malaysian Ringgit'],
+      ['THB','Thai Baht'], ['IDR','Indonesian Rupiah'], ['SEK','Swedish Krona'], ['CHF','Swiss Franc'],
+      ['ZAR','South African Rand'], ['KWD','Kuwaiti Dinar'], ['QAR','Qatari Riyal'], ['OMR','Omani Rial'],
+      ['BHD','Bahraini Dinar'], ['NGN','Nigerian Naira'], ['PHP','Philippine Peso'], ['KRW','South Korean Won']
+    ];
+
+    const ccFrom = document.getElementById('ccFrom');
+    const ccTo = document.getElementById('ccTo');
+    const ccAmount = document.getElementById('ccAmount');
+    const ccResult = document.getElementById('ccResult');
+    const ccRateInfo = document.getElementById('ccRateInfo');
+    const ccConvert = document.getElementById('ccConvert');
+    const ccSwap = document.getElementById('ccSwap');
+    const ccClear = document.getElementById('ccClear');
+
+    function fillCurrencies(){
+      const fill = (el, def) => {
+        el.innerHTML = '';
+        currencyList.forEach(([code, name])=>{
+          const opt = document.createElement('option');
+          opt.value = code; opt.textContent = `${code} — ${name}`;
+          if(code === def) opt.selected = true;
+          el.appendChild(opt);
+        });
+      };
+      fill(ccFrom, 'USD');
+      fill(ccTo, 'PKR');
+    }
+    fillCurrencies();
+
+    function fmtAmount(n, code){
+      if (!isFinite(n)) return '';
+      const zeroish = ['JPY','PKR','IDR','LKR','NPR','BDT','KRW'];
+      const min = zeroish.includes(code) ? 0 : 2;
+      return new Intl.NumberFormat(undefined, { minimumFractionDigits: min, maximumFractionDigits: 4 }).format(n);
+    }
+
+    async function convertNow(){
+      const amount = parseFloat(ccAmount.value);
+      const from = ccFrom.value;
+      const to = ccTo.value;
+
+      if (!(amount >= 0)) return showToast('صحیح رقم درکار ہے', 'error');
+      if (!from || !to) return showToast('براہ کرم کرنسی منتخب کریں', 'error');
+
+      ccConvert.disabled = true; const old = ccConvert.textContent; ccConvert.textContent = 'Converting...';
+      ccResult.textContent = 'Fetching live rate...'; ccRateInfo.textContent = '';
+
+      try{
+        const url = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&amount=${encodeURIComponent(amount)}`;
+        const res = await fetch(url, { cache:'no-store' });
+        if(!res.ok) throw new Error('Rate fetch failed');
+        const data = await res.json();
+
+        const result = data.result;
+        const rate = data.info?.rate;
+        const date = data.date;
+
+        if (typeof result !== 'number' || typeof rate !== 'number') throw new Error('Invalid response');
+
+        ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(result, to)} ${to}`;
+        ccRateInfo.textContent = `1 ${from} = ${fmtAmount(rate, to)} ${to} • ${date}`;
+      }catch(err){
+        ccResult.textContent = 'Conversion failed.';
+        ccRateInfo.textContent = '';
+        showToast('Currency conversion میں مسئلہ آیا.', 'error');
+      }finally{
+        ccConvert.disabled = false; ccConvert.textContent = old;
+      }
+    }
+
+    ccConvert.addEventListener('click', convertNow);
+    ccSwap.addEventListener('click', ()=>{
+      const f = ccFrom.value; ccFrom.value = ccTo.value; ccTo.value = f;
+      if (ccAmount.value) convertNow();
+    });
+    ccClear.addEventListener('click', ()=>{
+      ccAmount.value = '';
+      ccFrom.value = 'USD';
+      ccTo.value = 'PKR';
+      ccResult.textContent = 'Enter amount and convert.';
+      ccRateInfo.textContent = '';
+    });
+    ccAmount.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); convertNow(); } });
+    ccFrom.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
+    ccTo.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
 
     // Starfield background
     (()=>{
