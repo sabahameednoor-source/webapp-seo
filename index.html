@@ -478,7 +478,7 @@
       e.target.value = '';
     });
 
-    // Currency converter (HTML-based, 20+ currencies)
+    // Currency converter (HTML-based, 20+ currencies) — resilient with fallbacks
     const currencyList = [
       ['USD','US Dollar'], ['PKR','Pakistani Rupee'], ['EUR','Euro'], ['GBP','British Pound'],
       ['INR','Indian Rupee'], ['AED','UAE Dirham'], ['SAR','Saudi Riyal'], ['AUD','Australian Dollar'],
@@ -520,35 +520,84 @@
       return new Intl.NumberFormat(undefined, { minimumFractionDigits: min, maximumFractionDigits: 4 }).format(n);
     }
 
+    // Helper: fetch with timeout
+    async function fetchJSON(url, ms = 8000){
+      const ctl = new AbortController();
+      const t = setTimeout(()=>ctl.abort(), ms);
+      try{
+        const res = await fetch(url, { signal: ctl.signal, cache:'no-store' });
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } finally {
+        clearTimeout(t);
+      }
+    }
+
+    // Get rate with fallbacks
+    async function getRate(from, to){
+      // 1) exchangerate.host convert
+      try{
+        const u = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+        const d = await fetchJSON(u);
+        const rate = d?.info?.rate;
+        const date = d?.date;
+        if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/convert' };
+        console.warn('convert returned invalid data', d);
+      }catch(e){ console.warn('convert failed', e); }
+
+      // 2) exchangerate.host latest
+      try{
+        const u = `https://api.exchangerate.host/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)}`;
+        const d = await fetchJSON(u);
+        const rate = d?.rates?.[to];
+        const date = d?.date;
+        if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/latest' };
+        console.warn('latest returned invalid data', d);
+      }catch(e){ console.warn('latest failed', e); }
+
+      // 3) open.er-api.com latest
+      try{
+        const u = `https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`;
+        const d = await fetchJSON(u);
+        const rate = d?.rates?.[to];
+        const date = d?.time_last_update_utc || '';
+        if (typeof rate === 'number') return { rate, date, src: 'open.er-api.com' };
+        console.warn('er-api returned invalid data', d);
+      }catch(e){ console.warn('er-api failed', e); }
+
+      throw new Error('No provider returned a valid rate');
+    }
+
     async function convertNow(){
       const amount = parseFloat(ccAmount.value);
       const from = ccFrom.value;
       const to = ccTo.value;
 
-      if (!(amount >= 0)) return showToast('صحیح رقم درکار ہے', 'error');
+      if (!Number.isFinite(amount) || amount < 0) return showToast('صحیح رقم درج کریں', 'error');
       if (!from || !to) return showToast('براہ کرم کرنسی منتخب کریں', 'error');
+      if (from === to) {
+        ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(amount, to)} ${to}`;
+        ccRateInfo.textContent = `1 ${from} = 1 ${to}`;
+        return;
+      }
+      if (!navigator.onLine) {
+        showToast('انٹرنیٹ کنکشن موجود نہیں', 'error');
+        return;
+      }
 
       ccConvert.disabled = true; const old = ccConvert.textContent; ccConvert.textContent = 'Converting...';
       ccResult.textContent = 'Fetching live rate...'; ccRateInfo.textContent = '';
 
       try{
-        const url = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&amount=${encodeURIComponent(amount)}`;
-        const res = await fetch(url, { cache:'no-store' });
-        if(!res.ok) throw new Error('Rate fetch failed');
-        const data = await res.json();
-
-        const result = data.result;
-        const rate = data.info?.rate;
-        const date = data.date;
-
-        if (typeof result !== 'number' || typeof rate !== 'number') throw new Error('Invalid response');
-
+        const { rate, date, src } = await getRate(from, to);
+        const result = rate * amount;
         ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(result, to)} ${to}`;
-        ccRateInfo.textContent = `1 ${from} = ${fmtAmount(rate, to)} ${to} • ${date}`;
+        ccRateInfo.textContent = `1 ${from} = ${fmtAmount(rate, to)} ${to} • ${date || '—'} • ${src}`;
       }catch(err){
+        console.error('Conversion error:', err);
         ccResult.textContent = 'Conversion failed.';
         ccRateInfo.textContent = '';
-        showToast('Currency conversion میں مسئلہ آیا.', 'error');
+        showToast('Currency conversion میں مسئلہ آیا۔ بعد میں دوبارہ کوشش کریں۔', 'error');
       }finally{
         ccConvert.disabled = false; ccConvert.textContent = old;
       }
@@ -569,9 +618,12 @@
     ccAmount.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); convertNow(); } });
     ccFrom.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
     ccTo.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
+
+    // Demo conversion on load
+    window.addEventListener('load', ()=>{ if (ccAmount.value) convertNow(); });
   </script>
 
-  <!-- Three.js: ES Module (fixes deprecation) -->
+  <!-- Three.js: ES Module (no deprecation warnings) -->
   <script type="module">
     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 
@@ -615,3 +667,4 @@
   </script>
 </body>
 </html>
+```
