@@ -2,9 +2,10 @@
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
-  <title>SEO SERVICES — AI Tools</title>
+  <title>SEO SERVICES — AI Tools + Currency Converter</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
     :root{
       --bg:#0b1020; --card: rgba(255,255,255,0.06); --stroke: rgba(255,255,255,0.16);
@@ -27,12 +28,9 @@
       padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; transition:.2s }
     .tab-btn.active{ background: linear-gradient(90deg, rgba(0,212,255,0.18), rgba(124,77,255,0.18)); border-color: rgba(0,212,255,0.45) }
     .panes{ margin-top:12px }
-    .card{ width:100%; max-width:980px; margin:0 auto; padding:24px; border-radius:18px; background:var(--card); border:1px solid var(--stroke);
+    .card{ width:100%; max-width:1060px; margin:0 auto; padding:24px; border-radius:18px; background:var(--card); border:1px solid var(--stroke);
       backdrop-filter: blur(12px) saturate(130%); box-shadow: 0 12px 36px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.02); position:relative; overflow:hidden }
-    .card::before{ content:""; position:absolute; inset:-2px; border-radius:inherit; padding:2px;
-      background: conic-gradient(from 0deg, var(--accent1), var(--accent2), var(--accent3), var(--accent1));
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: spin 18s linear infinite; opacity:.5 }
-    @keyframes spin{ to{ transform: rotate(1turn) } }
+    /* Removed rotating conic gradient — no ::before spin */
 
     .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px }
     .full{ grid-column: 1/-1 }
@@ -42,32 +40,50 @@
       border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:12px 14px; outline:none; transition:.25s ease; font-size:.98rem }
     textarea{ min-height:110px; resize: vertical } input::placeholder, textarea::placeholder{ color:#9ab4c9 }
     input:focus, select:focus, textarea:focus{ border-color: rgba(0,212,255,0.75); box-shadow: 0 0 0 3px rgba(0,212,255,0.25), inset 0 0 8px rgba(0,212,255,0.18); transform: translateY(-1px) }
+
     .actions{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; margin-top:8px }
-    .btn{ appearance:none; border:0; cursor:pointer; border-radius:12px; padding:12px 18px; font-weight:700;
-      background: radial-gradient(120% 120% at 50% 0%, #e9fbff 0%, #c6f6ff 45%, #9df0ff 75%, #61e6ff 100%); color:#01212a; box-shadow: 0 10px 28px rgba(0,212,255,0.25); transition:.2s }
-    .btn:hover{ transform: translateY(-1px) scale(1.01) } .btn:disabled{ opacity:.6; cursor:not-allowed; transform:none; box-shadow:none }
-    .pane{ display:none } .pane.active{ display:block }
 
-    .drop{ border:1.5px dashed rgba(255,255,255,0.35); border-radius:14px; padding:16px; text-align:center; color:var(--muted) }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; white-space:pre-wrap; background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); padding:12px; border-radius:12px }
+    /* Professional buttons */
+    .btn{
+      position: relative; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 18px; border-radius:14px; border:1px solid transparent; font-weight:700;
+      cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; transition:.2s ease;
+    }
+    .btn-primary{ color:#fff; background: linear-gradient(90deg, var(--accent1), var(--accent2)); box-shadow: 0 10px 24px rgba(124,77,255,0.35) }
+    .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 30px rgba(124,77,255,0.5) }
+    .btn-primary:active{ transform: translateY(0); box-shadow: 0 8px 16px rgba(124,77,255,0.3) }
 
+    .btn-outline{ color:#dfe5ff; background: transparent; border-color: rgba(255,255,255,0.16) }
+    .btn-outline:hover{ border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); transform: translateY(-2px) }
+    .btn-outline:active{ transform: translateY(0) }
+
+    .btn-ghost{ color:#e6e8f0; background: rgba(255,255,255,0.02) }
+    .btn-ghost:hover{ background: rgba(255,255,255,0.06); transform: translateY(-2px) }
+    .btn-ghost:active{ transform: translateY(0) }
+
+    /* Toast (Urdu capable) */
     .toast{ position: fixed; left:50%; bottom:26px; transform: translateX(-50%) translateY(16px); background: rgba(0, 10, 18, 0.78); color:#eaffff; border:1px solid rgba(10, 211, 167, 0.45);
       border-radius:14px; padding:12px 16px; z-index: 10; min-width: 280px; max-width:92vw; box-shadow: 0 0 16px rgba(10,211,167,0.35), inset 0 0 20px rgba(10,211,167,0.12);
       backdrop-filter: blur(10px); font-family: "Noto Nastaliq Urdu","Poppins",sans-serif; direction: rtl; opacity:0; pointer-events:none; transition:.3s }
     .toast.error{ border-color: rgba(255, 107, 107, 0.55); box-shadow: 0 0 16px rgba(255,107,107,0.35), inset 0 0 20px rgba(255,107,107,0.12) }
     .toast.show{ opacity:1; transform: translateX(-50%) translateY(0) }
 
-    @media (max-width: 840px){ .grid{ grid-template-columns:1fr } .wrap{ padding:20px 12px } }
+    /* Currency iframe wrapper */
+    .iframe-wrap{ position:relative; width:100%; height:70vh; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.04) }
+    .iframe-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; background:#fff }
+
+    @media (max-width: 900px){ .grid{ grid-template-columns:1fr } .wrap{ padding:20px 12px } }
   </style>
 </head>
 <body>
+  <!-- Background -->
   <canvas id="bg"></canvas>
   <div class="veil" aria-hidden="true"></div>
 
   <div class="wrap">
     <div>
       <h1 class="title">SEO SERVICES</h1>
-      <p class="subtitle">Professional request form • Plus AI tools: OCR, Object Detection, PDF Text, Translation, Summarization</p>
+      <p class="subtitle">Professional request form • AI tools • Currency Converter</p>
       <div class="tabs">
         <button class="tab-btn active" data-tab="form">SEO Form</button>
         <button class="tab-btn" data-tab="ocr">OCR</button>
@@ -75,6 +91,7 @@
         <button class="tab-btn" data-tab="pdf">PDF → Text</button>
         <button class="tab-btn" data-tab="translate">Translate</button>
         <button class="tab-btn" data-tab="summarize">Summarize</button>
+        <button class="tab-btn" data-tab="currency">Currency</button>
       </div>
     </div>
 
@@ -85,11 +102,11 @@
         <div class="grid">
           <div>
             <label for="name">Name</label>
-            <input id="name" name="name" type="text" placeholder="Your full name" required />
+            <input id="name" name="name" required placeholder="Your full name" />
           </div>
           <div>
             <label for="contact">Phone No / Email Address</label>
-            <input id="contact" name="contact" type="text" placeholder="+92 3xx xxx xxxx or you@example.com" required />
+            <input id="contact" name="contact" required placeholder="+92 3xx xxx xxxx or you@example.com" />
           </div>
           <div class="full">
             <label for="facebook">Facebook ID or Page Link</label>
@@ -113,11 +130,12 @@
           </div>
           <div>
             <label for="autoreply">Auto Reply</label>
-            <input id="autoreply" name="autoreply" type="text" placeholder="Your preferred auto-reply (optional)" />
+            <input id="autoreply" name="autoreply" placeholder="Your preferred auto-reply (optional)" />
           </div>
         </div>
         <div class="actions">
-          <button id="submitBtn" class="btn" type="submit">Submit Request</button>
+          <button id="submitBtn" class="btn btn-primary" type="submit">Submit Request</button>
+          <button type="reset" class="btn btn-outline">Clear</button>
         </div>
       </form>
 
@@ -126,18 +144,17 @@
         <div class="grid">
           <div class="full">
             <label>Image for OCR (PNG/JPG)</label>
-            <div class="drop">
-              <input id="ocrFile" type="file" accept="image/*" />
-              <div class="hint">Drag & drop or choose an image with text.</div>
-            </div>
+            <input id="ocrFile" type="file" accept="image/*" />
+            <div class="hint">Drag & drop or choose an image with text.</div>
           </div>
           <div class="full">
             <label>Extracted Text</label>
-            <pre id="ocrOut" class="mono"></pre>
+            <pre id="ocrOut" style="white-space:pre-wrap;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;"></pre>
           </div>
         </div>
         <div class="actions">
-          <button id="btnOcr" class="btn">Run OCR</button>
+          <button id="btnOcr" class="btn btn-primary" type="button">Run OCR</button>
+          <button id="btnOcrClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
@@ -146,18 +163,17 @@
         <div class="grid">
           <div class="full">
             <label>Image for Object Detection</label>
-            <div class="drop">
-              <input id="objFile" type="file" accept="image/*" />
-              <div class="hint">Detect objects in your image.</div>
-            </div>
+            <input id="objFile" type="file" accept="image/*" />
+            <div class="hint">Detect objects in your image.</div>
           </div>
           <div class="full">
             <label>Detected Objects</label>
-            <pre id="objOut" class="mono"></pre>
+            <pre id="objOut" style="white-space:pre-wrap;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;"></pre>
           </div>
         </div>
         <div class="actions">
-          <button id="btnObjects" class="btn">Detect Objects</button>
+          <button id="btnObjects" class="btn btn-primary" type="button">Detect Objects</button>
+          <button id="btnObjClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
@@ -166,10 +182,8 @@
         <div class="grid">
           <div class="full">
             <label>Upload PDF</label>
-            <div class="drop">
-              <input id="pdfFile" type="file" accept="application/pdf" />
-              <div class="hint">Extract clean text (best for text-based PDFs).</div>
-            </div>
+            <input id="pdfFile" type="file" accept="application/pdf" />
+            <div class="hint">Extract clean text (text-based PDFs recommended).</div>
           </div>
           <div class="full">
             <label>Extracted Text</label>
@@ -177,7 +191,8 @@
           </div>
         </div>
         <div class="actions">
-          <button id="btnPdfText" class="btn">Extract Text</button>
+          <button id="btnPdfText" class="btn btn-primary" type="button">Extract Text</button>
+          <button id="btnPdfClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
@@ -203,7 +218,8 @@
           </div>
         </div>
         <div class="actions">
-          <button id="btnTranslate" class="btn">Translate</button>
+          <button id="btnTranslate" class="btn btn-primary" type="button">Translate</button>
+          <button id="btnTrClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
@@ -235,11 +251,26 @@
           </div>
         </div>
         <div class="actions">
-          <label class="btn" style="position:relative;">
+          <label class="btn btn-outline" style="position:relative;">
             PDF → Auto Summary
             <input id="sumPdfFile" type="file" accept="application/pdf" style="position:absolute; inset:0; opacity:0; cursor:pointer;">
           </label>
-          <button id="btnSummarize" class="btn">Summarize Text</button>
+          <button id="btnSummarize" class="btn btn-primary" type="button">Summarize Text</button>
+          <button id="btnSumClear" class="btn btn-ghost" type="button">Clear</button>
+        </div>
+      </div>
+
+      <!-- CURRENCY CONVERTER (embedded) -->
+      <div id="pane-currency" class="card pane">
+        <div class="actions" style="justify-content:space-between;margin-top:0;padding-top:0;">
+          <div class="hint">Currency converter is embedded below.</div>
+          <div style="display:flex;gap:10px;">
+            <a id="currencyOpen" class="btn btn-outline" target="_blank" rel="noopener">Open Full Page</a>
+            <button id="currencyReload" class="btn btn-ghost" type="button">Reload</button>
+          </div>
+        </div>
+        <div class="iframe-wrap">
+          <iframe id="currencyFrame" title="Currency Converter"></iframe>
         </div>
       </div>
 
@@ -250,8 +281,9 @@
 
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
   <script>
-    // SET THIS
-    const GAS_WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
+    // CONFIG
+    const GAS_WEB_APP_URL  = ""https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
+    const CURRENCY_URL     = "https://script.google.com/macros/s/AKfycbyJDrHASnuVtQDJyipQY2gS9v08YlBTNohGm5zdz4R5cw_i_XgMcsKw2-vdiNv4Kqqm/exec";
 
     // Tabs
     const tabs = document.querySelectorAll('.tab-btn');
@@ -262,6 +294,7 @@
       pdf: document.getElementById('pane-pdf'),
       translate: document.getElementById('pane-translate'),
       summarize: document.getElementById('pane-summarize'),
+      currency: document.getElementById('pane-currency'),
     };
     tabs.forEach(btn=>{
       btn.addEventListener('click', ()=>{
@@ -271,7 +304,7 @@
       });
     });
 
-    // Toast (Urdu)
+    // Toast
     const toastEl = document.getElementById('toast');
     function showToast(msg, type='ok', ms=3400){
       toastEl.textContent = msg;
@@ -281,20 +314,19 @@
       showToast._t = setTimeout(()=> toastEl.classList.remove('show'), ms);
     }
 
-    // Generic POST to Apps Script via FormData
+    // POST FormData to Apps Script
     async function postFD(fd){
       const res = await fetch(GAS_WEB_APP_URL, { method:'POST', body: fd });
-      if(!res.ok) throw new Error(await res.text());
+      if(!res.ok){ throw new Error(await res.text()); }
       return res.json();
     }
 
-    // SEO FORM → Google Sheets
+    // SEO FORM
     const form = document.getElementById('seoForm'), btn = document.getElementById('submitBtn');
     form.addEventListener('submit', async (e)=>{
       e.preventDefault(); btn.disabled = true; btn.textContent = 'Submitting...';
       try{
-        const fd = new FormData(form);
-        fd.append('action', 'save'); // backend will append to Sheet
+        const fd = new FormData(form); fd.append('action','save');
         const res = await postFD(fd);
         if(res.ok){ showToast('آپ کا فارم کامیابی سے جمع ہو چکا ہے ✅'); form.reset(); }
         else{ showToast('معذرت! فارم جمع کرنے میں مسئلہ آیا۔', 'error'); }
@@ -308,10 +340,13 @@
       if(!ocrFile.files[0]) return showToast('براہ کرم تصویر منتخب کریں', 'error');
       ocrOut.textContent = 'Processing...';
       try{
-        const fd = new FormData(); fd.append('action', 'ocr'); fd.append('file', ocrFile.files[0]);
+        const fd = new FormData(); fd.append('action','ocr'); fd.append('file', ocrFile.files[0]);
         const { text } = await postFD(fd);
         ocrOut.textContent = text || '(no text found)';
-      }catch(e){ ocrOut.textContent = ''; showToast('OCR ناکام رہا۔', 'error'); }
+      }catch(e){ ocrOut.textContent=''; showToast('OCR ناکام رہا۔', 'error'); }
+    });
+    document.getElementById('btnOcrClear').addEventListener('click', ()=>{
+      ocrFile.value=''; ocrOut.textContent='';
     });
 
     // Objects
@@ -320,23 +355,27 @@
       if(!objFile.files[0]) return showToast('براہ کرم تصویر منتخب کریں', 'error');
       objOut.textContent = 'Detecting...';
       try{
-        const fd = new FormData(); fd.append('action', 'objects'); fd.append('file', objFile.files[0]);
+        const fd = new FormData(); fd.append('action','objects'); fd.append('file', objFile.files[0]);
         const { objects } = await postFD(fd);
         objOut.textContent = JSON.stringify(objects || [], null, 2);
-      }catch(e){ objOut.textContent = ''; showToast('Detection ناکام رہا۔', 'error'); }
+      }catch(e){ objOut.textContent=''; showToast('Detection ناکام رہا۔', 'error'); }
+    });
+    document.getElementById('btnObjClear').addEventListener('click', ()=>{
+      objFile.value=''; objOut.textContent='';
     });
 
-    // PDF → text
+    // PDF → Text
     const pdfFile = document.getElementById('pdfFile'), pdfOut = document.getElementById('pdfOut');
     document.getElementById('btnPdfText').addEventListener('click', async ()=>{
       if(!pdfFile.files[0]) return showToast('براہ کرم PDF منتخب کریں', 'error');
       pdfOut.value = 'Extracting...';
       try{
-        const fd = new FormData(); fd.append('action', 'pdftext'); fd.append('file', pdfFile.files[0]);
+        const fd = new FormData(); fd.append('action','pdftext'); fd.append('file', pdfFile.files[0]);
         const { text } = await postFD(fd);
         pdfOut.value = text || '(no text found)';
-      }catch(e){ pdfOut.value = ''; showToast('PDF extraction ناکام رہا۔', 'error'); }
+      }catch(e){ pdfOut.value=''; showToast('PDF extraction ناکام رہا۔', 'error'); }
     });
+    document.getElementById('btnPdfClear').addEventListener('click', ()=>{ pdfFile.value=''; pdfOut.value=''; });
 
     // Translate
     document.getElementById('btnTranslate').addEventListener('click', async ()=>{
@@ -345,13 +384,16 @@
       if(!text) return showToast('متن درکار ہے', 'error');
       const out = document.getElementById('trOut'); out.value = 'Translating...';
       try{
-        const fd = new FormData(); fd.append('action', 'translate'); fd.append('text', text); fd.append('targetLang', targetLang);
+        const fd = new FormData(); fd.append('action','translate'); fd.append('text', text); fd.append('targetLang', targetLang);
         const { result } = await postFD(fd);
         out.value = result || '';
       }catch(e){ out.value=''; showToast('ترجمہ ناکام رہا۔', 'error'); }
     });
+    document.getElementById('btnTrClear').addEventListener('click', ()=>{
+      document.getElementById('trSrc').value=''; document.getElementById('trOut').value='';
+    });
 
-    // Summarize text
+    // Summarize
     document.getElementById('btnSummarize').addEventListener('click', async ()=>{
       const text = document.getElementById('sumSrc').value.trim();
       const lang = document.getElementById('sumLang').value;
@@ -359,27 +401,37 @@
       if(!text) return showToast('متن درکار ہے', 'error');
       const out = document.getElementById('sumOut'); out.value = 'Summarizing...';
       try{
-        const fd = new FormData(); fd.append('action', 'summarize'); fd.append('text', text); fd.append('lang', lang); fd.append('style', style);
+        const fd = new FormData(); fd.append('action','summarize'); fd.append('text', text); fd.append('lang', lang); fd.append('style', style);
         const { result } = await postFD(fd);
         out.value = result || '';
       }catch(e){ out.value=''; showToast('خلاصہ ناکام رہا۔', 'error'); }
     });
-
-    // PDF → Summary
+    document.getElementById('btnSumClear').addEventListener('click', ()=>{
+      document.getElementById('sumSrc').value=''; document.getElementById('sumOut').value='';
+      document.getElementById('sumLang').value='Urdu'; document.getElementById('sumStyle').value='Bullet points';
+    });
     document.getElementById('sumPdfFile').addEventListener('change', async (e)=>{
       const file = e.target.files[0]; if(!file) return;
       const out = document.getElementById('sumOut'); out.value = 'Summarizing PDF...';
       try{
         const lang = document.getElementById('sumLang').value;
         const style = document.getElementById('sumStyle').value;
-        const fd = new FormData(); fd.append('action', 'pdfsummary'); fd.append('file', file); fd.append('lang', lang); fd.append('style', style);
+        const fd = new FormData(); fd.append('action','pdfsummary'); fd.append('file', file); fd.append('lang', lang); fd.append('style', style);
         const { result } = await postFD(fd);
         out.value = result || '';
       }catch(err){ out.value=''; showToast('PDF خلاصہ ناکام رہا۔', 'error'); }
       e.target.value = '';
     });
 
-    // Three.js starfield
+    // Currency iframe controls
+    const currencyFrame = document.getElementById('currencyFrame');
+    const currencyOpen = document.getElementById('currencyOpen');
+    const currencyReload = document.getElementById('currencyReload');
+    currencyFrame.src = CURRENCY_URL;
+    currencyOpen.href = CURRENCY_URL;
+    currencyReload.addEventListener('click', ()=>{ currencyFrame.src = CURRENCY_URL; });
+
+    // Starfield (lightweight, no rotating box)
     (()=>{
       const canvas = document.getElementById('bg');
       const scene = new THREE.Scene();
