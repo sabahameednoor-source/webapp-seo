@@ -1,68 +1,326 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Saba's Service Form</title>
+  <meta charset="utf-8" />
+  <title>Neon Form | Saba</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Optional: Urdu-friendly font fallback -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
-    label { margin-top: 12px; display: block; }
-    input, textarea, button { width: 100%; padding: 10px; margin-top: 4px; }
-    button { background: #007bff; color: white; border: none; cursor: pointer; }
-    .ok { color: green; }
-    .err { color: red; }
+    :root{
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --neon1: #00f5ff;
+      --neon2: #7c4dff;
+      --neon3: #ff00e0;
+      --card-bg: rgba(255,255,255,0.06);
+      --card-stroke: rgba(255,255,255,0.18);
+      --text: #e8f5ff;
+      --muted: #b7c7d6;
+    }
+
+    *{ box-sizing: border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      overflow-x:hidden;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3), #000000);
+      background-size: 400% 400%;
+      animation: gradientShift 18s ease infinite;
+      position: relative;
+    }
+
+    /* Twinkling stars overlay */
+    .stars, .stars2 {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.3) 50%, transparent 51%),
+                  radial-gradient(1.5px 1.5px at 60% 70%, rgba(255,255,255,0.25) 50%, transparent 51%),
+                  radial-gradient(1.8px 1.8px at 80% 20%, rgba(255,255,255,0.2) 50%, transparent 51%),
+                  radial-gradient(1.2px 1.2px at 35% 85%, rgba(255,255,255,0.25) 50%, transparent 51%),
+                  radial-gradient(1.5px 1.5px at 75% 45%, rgba(255,255,255,0.18) 50%, transparent 51%);
+      opacity: 0.5;
+      animation: drift 60s linear infinite;
+    }
+    .stars2{
+      filter: blur(1px);
+      opacity: 0.35;
+      animation-duration: 100s;
+      animation-direction: reverse;
+    }
+
+    @keyframes gradientShift{
+      0%{ background-position: 0% 50%; }
+      50%{ background-position: 100% 50%; }
+      100%{ background-position: 0% 50%; }
+    }
+    @keyframes drift{
+      0%{ transform: translate3d(0,0,0); }
+      100%{ transform: translate3d(-200px, -200px, 0); }
+    }
+
+    .container{
+      display:grid;
+      place-items:center;
+      min-height:100vh;
+      padding: 40px 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-card{
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      padding: 28px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-stroke);
+      border-radius: 18px;
+      box-shadow:
+        0 10px 25px rgba(0,0,0,0.35),
+        0 0 25px rgba(0, 245, 255, 0.08) inset;
+      backdrop-filter: blur(12px) saturate(130%);
+      -webkit-backdrop-filter: blur(12px) saturate(130%);
+      overflow: hidden;
+    }
+
+    /* Animated neon border */
+    .form-card::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius: inherit;
+      padding:2px;
+      background: conic-gradient(from 0deg,
+        var(--neon1), var(--neon2), var(--neon3), var(--neon1));
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      animation: spin 8s linear infinite;
+      opacity: 0.9;
+    }
+    @keyframes spin{
+      to{ transform: rotate(1turn); }
+    }
+
+    .form-card h1{
+      margin: 4px 0 14px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .subtitle{
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .grid .full{ grid-column: 1 / -1; }
+
+    label{
+      display:block;
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      color: #cae9ff;
+    }
+    input, textarea{
+      width:100%;
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 12px 14px;
+      outline: none;
+      transition: 0.25s ease;
+      box-shadow: inset 0 0 0 0 rgba(0,245,255,0.3);
+    }
+    textarea{ min-height: 110px; resize: vertical; }
+
+    input::placeholder, textarea::placeholder{ color: #9bb5c9; }
+
+    input:focus, textarea:focus{
+      border-color: rgba(0,245,255,0.75);
+      box-shadow:
+        0 0 12px rgba(0,245,255,0.45),
+        inset 0 0 8px rgba(0,245,255,0.25);
+      transform: translateY(-1px);
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      margin-top: 6px;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    .btn{
+      appearance:none;
+      border: 0;
+      color: #001016;
+      font-weight: 700;
+      background:
+        radial-gradient(120% 120% at 50% 0%,
+          #e6ffff 0%, #bff8ff 40%, #8bf2ff 70%, #57eaff 100%);
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor:pointer;
+      transition: 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(90deg,
+        rgba(0,245,255,0.0),
+        rgba(255,255,255,0.25),
+        rgba(0,245,255,0.0));
+      transform: translateX(-120%);
+      transition: transform .5s ease;
+    }
+    .btn:hover{ transform: translateY(-1px) scale(1.01); box-shadow: 0 10px 30px rgba(0,245,255,0.25); }
+    .btn:hover::after{ transform: translateX(120%); }
+    .btn:disabled{ opacity: .6; cursor: not-allowed; box-shadow:none; transform:none; }
+
+    /* Urdu toast (popup) */
+    .toast{
+      position: fixed;
+      z-index: 9999;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%) translateY(20px);
+      min-width: 280px;
+      max-width: 92vw;
+      background: rgba(0, 9, 14, 0.75);
+      color: #eaffff;
+      border: 1px solid rgba(0,245,255,0.35);
+      box-shadow:
+        0 0 14px rgba(0,245,255,0.35),
+        inset 0 0 20px rgba(0,245,255,0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 12px 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+      direction: rtl; /* Urdu right-to-left */
+      font-family: "Noto Nastaliq Urdu", "Poppins", system-ui, sans-serif;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .toast.success{ border-color: rgba(0,245,255,0.6); }
+    .toast.error{
+      border-color: rgba(255, 85, 85, 0.6);
+      box-shadow:
+        0 0 14px rgba(255, 85, 85, 0.35),
+        inset 0 0 20px rgba(255, 85, 85, 0.12);
+    }
+
+    .note{
+      margin-top: 10px;
+      color: #9bb5c9;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 560px){
+      .grid{ grid-template-columns: 1fr; }
+      .form-card{ padding: 22px; }
+    }
   </style>
 </head>
 <body>
-  <h2>Request a Service</h2>
-  <form id="service-form">
-    <label>Name</label>
-    <input name="name" required />
+  <div class="stars"></div>
+  <div class="stars2"></div>
 
-    <label>Phone No / Email Address</label>
-    <input name="contact" required />
+  <div class="container">
+    <form id="contactForm" class="form-card" autocomplete="on">
+      <h1>Contact Saba</h1>
+      <p class="subtitle">Neon glossy form • GitHub Pages ready</p>
 
-    <label>Facebook ID or Page Link</label>
-    <input name="facebook" />
+      <div class="grid">
+        <div>
+          <label for="name">Full Name</label>
+          <input id="name" name="name" type="text" placeholder="e.g., Saba Khan" required />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+        </div>
+        <div class="full">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Write your message..." required></textarea>
+        </div>
+      </div>
 
-    <label>Service (You Want From Me)</label>
-    <input name="service" />
+      <div class="actions">
+        <button id="submitBtn" class="btn" type="submit">Submit</button>
+      </div>
 
-    <label>Auto Reply</label>
-    <textarea name="autoreply"></textarea>
+      <p class="note">Deploy on GitHub Pages. Data saves to Google Sheet via Apps Script.</p>
+    </form>
+  </div>
 
-    <button type="submit">Submit</button>
-  </form>
-
-  <p id="status"></p>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    const FORM = document.getElementById('service-form');
-    const STATUS = document.getElementById('status');
-    const SCRIPT_URL = 'PASTE_YOUR_WEB_APP_URL_HERE'; // 👈 Add your deployed Apps Script URL
+    // Replace this with your deployed Google Apps Script Web App URL
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_DEPLOY_URL/exec";
 
-    FORM.addEventListener('submit', async (e) => {
+    const form = document.getElementById('contactForm');
+    const toast = document.getElementById('toast');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function showToast(message, type = 'success', duration = 3500){
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      STATUS.textContent = 'Submitting...';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
 
-      const formData = new FormData(FORM);
-      try {
-        const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+      try{
+        const fd = new FormData(form); // avoids CORS preflight
+        const res = await fetch(GAS_WEB_APP_URL, {
+          method: 'POST',
+          body: fd,
+        });
 
-        let ok = false, msg = 'Form submitted!';
-        try {
-          const data = await res.json();
-          ok = data.ok;
-          msg = data.message;
-        } catch (_) {
-          ok = res.ok;
+        // If response returns ok, show Urdu success toast
+        if(res.ok){
+          showToast('آپ کا فارم کامیابی سے جمع ہو چکا ہے ✅', 'success');
+          form.reset();
+        } else {
+          showToast('معذرت! جمع کرانے میں مسئلہ آیا۔ براہ کرم دوبارہ کوشش کریں۔', 'error');
         }
-
-        STATUS.textContent = msg;
-        STATUS.className = ok ? 'ok' : 'err';
-        if (ok) FORM.reset();
-      } catch (err) {
-        STATUS.textContent = 'Network error. Try again.';
-        STATUS.className = 'err';
+      }catch(err){
+        console.error(err);
+        showToast('نیٹ ورک خرابی۔ براہ کرم اپنا انٹرنیٹ چیک کریں۔', 'error');
+      }finally{
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
       }
     });
   </script>
