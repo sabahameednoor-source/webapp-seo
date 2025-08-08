@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Saba's Service Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
+    label { margin-top: 12px; display: block; }
+    input, textarea, button { width: 100%; padding: 10px; margin-top: 4px; }
+    button { background: #007bff; color: white; border: none; cursor: pointer; }
+    .ok { color: green; }
+    .err { color: red; }
+  </style>
+</head>
+<body>
+  <h2>Request a Service</h2>
+  <form id="service-form">
+    <label>Name</label>
+    <input name="name" required />
+
+    <label>Phone No / Email Address</label>
+    <input name="contact" required />
+
+    <label>Facebook ID or Page Link</label>
+    <input name="facebook" />
+
+    <label>Service (You Want From Me)</label>
+    <input name="service" />
+
+    <label>Auto Reply</label>
+    <textarea name="autoreply"></textarea>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    const FORM = document.getElementById('service-form');
+    const STATUS = document.getElementById('status');
+    const SCRIPT_URL = 'PASTE_YOUR_WEB_APP_URL_HERE'; // 👈 Add your deployed Apps Script URL
+
+    FORM.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      STATUS.textContent = 'Submitting...';
+
+      const formData = new FormData(FORM);
+      try {
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+
+        let ok = false, msg = 'Form submitted!';
+        try {
+          const data = await res.json();
+          ok = data.ok;
+          msg = data.message;
+        } catch (_) {
+          ok = res.ok;
+        }
+
+        STATUS.textContent = msg;
+        STATUS.className = ok ? 'ok' : 'err';
+        if (ok) FORM.reset();
+      } catch (err) {
+        STATUS.textContent = 'Network error. Try again.';
+        STATUS.className = 'err';
+      }
+    });
+  </script>
+</body>
+</html>
