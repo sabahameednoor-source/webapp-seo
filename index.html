@@ -690,6 +690,26 @@
     addEventListener('resize', ()=>{
       camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight)
     }, {passive:true});
+
+<button onclick="triggerEmails()">Send Emails</button>
+<p id="result"></p>
+
+<script>
+  async function triggerEmails() {
+    const resultEl = document.getElementById('result');
+    resultEl.textContent = 'Sending...';
+
+    const url = 'https://script.google.com/macros/s/AKfycbxmllG3Enb4fQwPm5t-cQfAJB43FWU48O4THC_Bq4gRQ1orAVTDHx0Y-M6_olDM2HlA/exec';
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      resultEl.textContent = data.message || 'Done';
+    } catch (e) {
+      resultEl.textContent = '❌ Failed: ' + (e.message || e);
+    }
+  }
+
   </script>
 </body>
 </html>
