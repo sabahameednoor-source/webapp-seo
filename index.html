@@ -529,7 +529,7 @@
         el.innerHTML = '';
         currencyList.forEach(([code, name])=>{
           const opt = document.createElement('option');
-          opt.value = code; opt.textContent = `${code} — ${name}`;
+          opt.value = code; opt.textContent = ${code} — ${name};
           if(code === def) opt.selected = true;
           el.appendChild(opt);
         });
@@ -552,7 +552,7 @@
       const t = setTimeout(()=>ctl.abort(), ms);
       try{
         const res = await fetch(url, { signal: ctl.signal, cache:'no-store' });
-        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        if(!res.ok) throw new Error(HTTP ${res.status});
         return await res.json();
       } finally {
         clearTimeout(t);
@@ -563,7 +563,7 @@
     async function getRate(from, to){
       // 1) exchangerate.host convert
       try{
-        const u = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+        const u = https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)};
         const d = await fetchJSON(u);
         const rate = d?.info?.rate;
         const date = d?.date;
@@ -573,7 +573,7 @@
 
       // 2) exchangerate.host latest
       try{
-        const u = `https://api.exchangerate.host/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)}`;
+        const u = https://api.exchangerate.host/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)};
         const d = await fetchJSON(u);
         const rate = d?.rates?.[to];
         const date = d?.date;
@@ -583,7 +583,7 @@
 
       // 3) open.er-api.com latest
       try{
-        const u = `https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`;
+        const u = https://open.er-api.com/v6/latest/${encodeURIComponent(from)};
         const d = await fetchJSON(u);
         const rate = d?.rates?.[to];
         const date = d?.time_last_update_utc || '';
@@ -602,8 +602,8 @@
       if (!Number.isFinite(amount) || amount < 0) return showToast('صحیح رقم درج کریں', 'error');
       if (!from || !to) return showToast('براہ کرم کرنسی منتخب کریں', 'error');
       if (from === to) {
-        ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(amount, to)} ${to}`;
-        ccRateInfo.textContent = `1 ${from} = 1 ${to}`;
+        ccResult.textContent = ${fmtAmount(amount, from)} ${from} = ${fmtAmount(amount, to)} ${to};
+        ccRateInfo.textContent = 1 ${from} = 1 ${to};
         return;
       }
       if (!navigator.onLine) {
@@ -617,8 +617,8 @@
       try{
         const { rate, date, src } = await getRate(from, to);
         const result = rate * amount;
-        ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(result, to)} ${to}`;
-        ccRateInfo.textContent = `1 ${from} = ${fmtAmount(rate, to)} ${to} • ${date || '—'} • ${src}`;
+        ccResult.textContent = ${fmtAmount(amount, from)} ${from} = ${fmtAmount(result, to)} ${to};
+        ccRateInfo.textContent = 1 ${from} = ${fmtAmount(rate, to)} ${to} • ${date || '—'} • ${src};
       }catch(err){
         console.error('Conversion error:', err);
         ccResult.textContent = 'Conversion failed.';
@@ -713,4 +713,63 @@
 
   </script>
 </body>
+</html><!DOCTYPE html>
+<html>
+<head>
+    <title>SEO Collaboration Data</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        #data-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+            max-width: 600px;
+            margin: auto;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="data-box">
+        <h2>SEO Collaboration Sheet Data</h2>
+        <button onclick="loadData()">Fetch Data</button>
+        <pre id="output">Click the button to fetch sheet data...</pre>
+    </div>
+
+    <script>
+        function loadData() {
+            fetch("https://script.google.com/macros/s/AKfycbzsMlil4V_pnKoT347myO5Z2ScXfBQ-3wFOCwuqdsy11ZiS00FhBr7WKzpgLhCp6Xs-/exec")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById("output").textContent = "Error: " + error;
+                });
+        }
+    </script>
+</body>
 </html>
+
