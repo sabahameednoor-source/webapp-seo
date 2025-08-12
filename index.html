@@ -9,95 +9,46 @@
   <style>
     :root{
       --bg:#0b1020; --card: rgba(255,255,255,0.06); --stroke: rgba(255,255,255,0.16);
-      --txt:#e7f2ff; --muted:#a9bfd6; --accent1:#00d4ff; --accent2:#7c4dff; --accent3:#ff2bd6; --ok:#0ad3a7; --err:#ff6b6b;
-      color-scheme: dark; /* ensure native controls render for dark UI */
+      --txt:#e7f2ff; --muted:#a9bfd6; --accent1:#00d4ff; --accent2:#7c4dff; --accent3:#ff2bd6; --ok:#0ad3a7; --err:#ff6b6b
     }
     *{box-sizing:border-box} html,body{height:100%}
-    body{
-      margin:0; color:var(--txt); background:var(--bg);
-      font-family:"Poppins",system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      overflow:auto;
-    }
-
-    /* Background */
+    body{ margin:0; color:var(--txt); background:var(--bg); font-family:"Poppins",system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow:hidden }
     #bg{ position:fixed; inset:0; z-index:0 }
     .veil{ position:fixed; inset:0; z-index:0; background:
       radial-gradient(1200px 800px at 70% 30%, rgba(124,77,255,0.12), transparent 60%),
       radial-gradient(900px 700px at 20% 75%, rgba(0,212,255,0.10), transparent 60%) }
-
-    /* Layout */
     .wrap{ position:relative; z-index:1; min-height:100vh; display:grid; grid-template-rows:auto 1fr; gap:14px; padding:32px 16px; }
     .title{ margin:0; font-weight:800; letter-spacing:.5px; font-size: clamp(24px, 4vw, 34px);
       background: linear-gradient(90deg, var(--accent1), var(--accent3), var(--accent2));
       -webkit-background-clip:text; background-clip:text; color: transparent; text-transform: uppercase; }
     .subtitle{ margin:4px 0 0; color:var(--muted); font-size:.98rem }
 
-    /* Tabs */
     .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px }
     .tab-btn{ background: rgba(255,255,255,0.06); border:1px solid var(--stroke); color:var(--txt);
       padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; transition:.2s }
-    .tab-btn:hover{ transform: translateY(-2px); border-color: rgba(0,212,255,0.45); background: rgba(0,212,255,0.10) }
-    .tab-btn:active{ transform: translateY(0) }
     .tab-btn.active{ background: linear-gradient(90deg, rgba(0,212,255,0.18), rgba(124,77,255,0.18)); border-color: rgba(0,212,255,0.45) }
-
-    /* Panes */
     .panes{ margin-top:12px }
-    .pane{ display:none }
-    .pane.active{ display:block }
-
     .card{ width:100%; max-width:1060px; margin:0 auto; padding:24px; border-radius:18px; background:var(--card); border:1px solid var(--stroke);
       backdrop-filter: blur(12px) saturate(130%); box-shadow: 0 12px 36px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.02); position:relative; overflow:hidden }
+    /* Removed rotating conic gradient — no ::before spin */
 
     .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px }
     .full{ grid-column: 1/-1 }
-
     label{ display:block; margin:0 0 8px; font-size:.92rem; color:#d6e8ff }
     .hint{ font-size:.8rem; color:var(--muted); margin-top:6px }
-
-    input, select, textarea{
-      width:100%; color:var(--txt); background: rgba(255,255,255,0.07);
-      border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:12px 14px; outline:none; transition:.25s ease; font-size:.98rem
-    }
-    textarea{ min-height:110px; resize: vertical }
-    input::placeholder, textarea::placeholder{ color:#9ab4c9 }
-    input:focus, select:focus, textarea:focus{
-      border-color: rgba(0,212,255,0.75); box-shadow: 0 0 0 3px rgba(0,212,255,0.25), inset 0 0 8px rgba(0,212,255,0.18); transform: translateY(-1px)
-    }
-
-    /* Dropdown visibility fixes */
-    /* Make sure dropdown list items are visible on dark UI across browsers */
-    select {
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      background-color: rgba(255,255,255,0.07);
-      color: var(--txt);
-      -webkit-text-fill-color: var(--txt); /* Safari */
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    }
-    /* Color the popup options (supported in most Chromium/Firefox) */
-    select option,
-    select optgroup {
-      background-color: #0f162b;
-      color: var(--txt);
-    }
-    /* Hover/selected visibility */
-    select option:hover,
-    select option:checked,
-    select option:focus {
-      background-color: #1a253c;
-      color: #ffffff;
-    }
+    input, select, textarea{ width:100%; color:var(--txt); background: rgba(255,255,255,0.07);
+      border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:12px 14px; outline:none; transition:.25s ease; font-size:.98rem }
+    textarea{ min-height:110px; resize: vertical } input::placeholder, textarea::placeholder{ color:#9ab4c9 }
+    input:focus, select:focus, textarea:focus{ border-color: rgba(0,212,255,0.75); box-shadow: 0 0 0 3px rgba(0,212,255,0.25), inset 0 0 8px rgba(0,212,255,0.18); transform: translateY(-1px) }
 
     .actions{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; margin-top:8px }
 
-    /* Buttons */
+    /* Professional buttons */
     .btn{
       position: relative; display:inline-flex; align-items:center; justify-content:center; gap:10px;
       padding:12px 18px; border-radius:14px; border:1px solid transparent; font-weight:700;
       cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; transition:.2s ease;
     }
-    .btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none !important; box-shadow:none !important }
     .btn-primary{ color:#fff; background: linear-gradient(90deg, var(--accent1), var(--accent2)); box-shadow: 0 10px 24px rgba(124,77,255,0.35) }
     .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 30px rgba(124,77,255,0.5) }
     .btn-primary:active{ transform: translateY(0); box-shadow: 0 8px 16px rgba(124,77,255,0.3) }
@@ -111,33 +62,17 @@
     .btn-ghost:active{ transform: translateY(0) }
 
     /* Toast (Urdu capable) */
-    .toast{
-      position: fixed; left:50%; bottom:26px; transform: translateX(-50%) translateY(16px);
-      background: rgba(0, 10, 18, 0.78); color:#eaffff; border:1px solid rgba(10, 211, 167, 0.45);
-      border-radius:14px; padding:12px 16px; z-index: 9999; min-width: 280px; max-width:92vw;
-      box-shadow: 0 0 16px rgba(10,211,167,0.35), inset 0 0 20px rgba(10,211,167,0.12);
-      backdrop-filter: blur(10px); font-family: "Noto Nastaliq Urdu","Poppins",sans-serif; direction: rtl;
-      opacity:0; pointer-events:none; transition:.3s
-    }
+    .toast{ position: fixed; left:50%; bottom:26px; transform: translateX(-50%) translateY(16px); background: rgba(0, 10, 18, 0.78); color:#eaffff; border:1px solid rgba(10, 211, 167, 0.45);
+      border-radius:14px; padding:12px 16px; z-index: 10; min-width: 280px; max-width:92vw; box-shadow: 0 0 16px rgba(10,211,167,0.35), inset 0 0 20px rgba(10,211,167,0.12);
+      backdrop-filter: blur(10px); font-family: "Noto Nastaliq Urdu","Poppins",sans-serif; direction: rtl; opacity:0; pointer-events:none; transition:.3s }
     .toast.error{ border-color: rgba(255, 107, 107, 0.55); box-shadow: 0 0 16px rgba(255,107,107,0.35), inset 0 0 20px rgba(255,107,107,0.12) }
     .toast.show{ opacity:1; transform: translateX(-50%) translateY(0) }
 
-    /* Currency (HTML) */
-    .rate-box{
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 14px;
-      line-height: 1.5;
-      min-height: 72px;
-    }
-    .rate-main{ font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
-    .rate-sub{ color: var(--muted); font-size: .92rem; }
+    /* Currency iframe wrapper */
+    .iframe-wrap{ position:relative; width:100%; height:70vh; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.04) }
+    .iframe-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; background:#fff }
 
-    @media (max-width: 900px){
-      .grid{ grid-template-columns:1fr }
-      .wrap{ padding:20px 12px }
-    }
+    @media (max-width: 900px){ .grid{ grid-template-columns:1fr } .wrap{ padding:20px 12px } }
   </style>
 </head>
 <body>
@@ -214,7 +149,7 @@
           </div>
           <div class="full">
             <label>Extracted Text</label>
-            <pre id="ocrOut" style="white-space:pre-wrap;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;min-height:90px;"></pre>
+            <pre id="ocrOut" style="white-space:pre-wrap;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;"></pre>
           </div>
         </div>
         <div class="actions">
@@ -233,7 +168,7 @@
           </div>
           <div class="full">
             <label>Detected Objects</label>
-            <pre id="objOut" style="white-space:pre-wrap;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;min-height:90px;"></pre>
+            <pre id="objOut" style="white-space:pre-wrap;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;"></pre>
           </div>
         </div>
         <div class="actions">
@@ -325,33 +260,17 @@
         </div>
       </div>
 
-      <!-- CURRENCY CONVERTER — HTML ONLY -->
+      <!-- CURRENCY CONVERTER (embedded) -->
       <div id="pane-currency" class="card pane">
-        <div class="grid">
-          <div>
-            <label for="ccAmount">Amount / رقم</label>
-            <input id="ccAmount" type="number" min="0" step="0.01" placeholder="e.g., 100" value="100" />
-          </div>
-          <div>
-            <label for="ccFrom">Source currency / سورس کرنسی</label>
-            <select id="ccFrom"></select>
-          </div>
-          <div>
-            <label for="ccTo">Target currency / مطلوبہ کرنسی</label>
-            <select id="ccTo"></select>
-          </div>
-          <div class="full rate-box">
-            <div id="ccResult" class="rate-main">Enter amount and convert.</div>
-            <div id="ccRateInfo" class="rate-sub"></div>
+        <div class="actions" style="justify-content:space-between;margin-top:0;padding-top:0;">
+          <div class="hint">Currency converter is embedded below.</div>
+          <div style="display:flex;gap:10px;">
+            <a id="currencyOpen" class="btn btn-outline" target="_blank" rel="noopener">Open Full Page</a>
+            <button id="currencyReload" class="btn btn-ghost" type="button">Reload</button>
           </div>
         </div>
-        <div class="actions" style="justify-content:space-between;">
-          <div>
-            <button id="ccConvert" class="btn btn-primary" type="button">Convert</button>
-            <button id="ccSwap" class="btn btn-outline" type="button">Swap</button>
-            <button id="ccClear" class="btn btn-ghost" type="button">Clear</button>
-          </div>
-          <div class="hint">Live rates via exchangerate.host — pure HTML + JS</div>
+        <div class="iframe-wrap">
+          <iframe id="currencyFrame" title="Currency Converter"></iframe>
         </div>
       </div>
 
@@ -360,12 +279,13 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <!-- App logic (non-module) -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
   <script>
-    // CONFIG — Apps Script for form + AI tools
-    const GAS_WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
+    // CONFIG
+    const GAS_WEB_APP_URL  = "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_DEPLOY_URL/exec";
+    const CURRENCY_URL     = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
 
-    // Tabs logic
+    // Tabs
     const tabs = document.querySelectorAll('.tab-btn');
     const panes = {
       form: document.getElementById('seoForm'),
@@ -381,7 +301,6 @@
         tabs.forEach(b=>b.classList.remove('active')); btn.classList.add('active');
         Object.values(panes).forEach(p=>p.classList.remove('active'));
         panes[btn.dataset.tab].classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
 
@@ -403,16 +322,16 @@
     }
 
     // SEO FORM
-    const form = document.getElementById('seoForm'), submitBtn = document.getElementById('submitBtn');
+    const form = document.getElementById('seoForm'), btn = document.getElementById('submitBtn');
     form.addEventListener('submit', async (e)=>{
-      e.preventDefault(); submitBtn.disabled = true; const old = submitBtn.textContent; submitBtn.textContent = 'Submitting...';
+      e.preventDefault(); btn.disabled = true; btn.textContent = 'Submitting...';
       try{
         const fd = new FormData(form); fd.append('action','save');
         const res = await postFD(fd);
         if(res.ok){ showToast('آپ کا فارم کامیابی سے جمع ہو چکا ہے ✅'); form.reset(); }
         else{ showToast('معذرت! فارم جمع کرنے میں مسئلہ آیا۔', 'error'); }
       }catch(err){ showToast('نیٹ ورک خرابی۔ براہ کرم اپنا انٹرنیٹ چیک کریں۔', 'error'); }
-      finally{ submitBtn.disabled = false; submitBtn.textContent = old; }
+      finally{ btn.disabled = false; btn.textContent = 'Submit Request'; }
     });
 
     // OCR
@@ -504,272 +423,33 @@
       e.target.value = '';
     });
 
-    // Currency converter (HTML-based, 20+ currencies) — resilient with fallbacks
-    const currencyList = [
-      ['USD','US Dollar'], ['PKR','Pakistani Rupee'], ['EUR','Euro'], ['GBP','British Pound'],
-      ['INR','Indian Rupee'], ['AED','UAE Dirham'], ['SAR','Saudi Riyal'], ['AUD','Australian Dollar'],
-      ['CAD','Canadian Dollar'], ['CNY','Chinese Yuan'], ['JPY','Japanese Yen'], ['TRY','Turkish Lira'],
-      ['BDT','Bangladeshi Taka'], ['LKR','Sri Lankan Rupee'], ['NPR','Nepalese Rupee'], ['MYR','Malaysian Ringgit'],
-      ['THB','Thai Baht'], ['IDR','Indonesian Rupiah'], ['SEK','Swedish Krona'], ['CHF','Swiss Franc'],
-      ['ZAR','South African Rand'], ['KWD','Kuwaiti Dinar'], ['QAR','Qatari Riyal'], ['OMR','Omani Rial'],
-      ['BHD','Bahraini Dinar'], ['NGN','Nigerian Naira'], ['PHP','Philippine Peso'], ['KRW','South Korean Won']
-    ];
+    // Currency iframe controls
+    const currencyFrame = document.getElementById('currencyFrame');
+    const currencyOpen = document.getElementById('currencyOpen');
+    const currencyReload = document.getElementById('currencyReload');
+    currencyFrame.src = CURRENCY_URL;
+    currencyOpen.href = CURRENCY_URL;
+    currencyReload.addEventListener('click', ()=>{ currencyFrame.src = CURRENCY_URL; });
 
-    const ccFrom = document.getElementById('ccFrom');
-    const ccTo = document.getElementById('ccTo');
-    const ccAmount = document.getElementById('ccAmount');
-    const ccResult = document.getElementById('ccResult');
-    const ccRateInfo = document.getElementById('ccRateInfo');
-    const ccConvert = document.getElementById('ccConvert');
-    const ccSwap = document.getElementById('ccSwap');
-    const ccClear = document.getElementById('ccClear');
-
-    function fillCurrencies(){
-      const fill = (el, def) => {
-        el.innerHTML = '';
-        currencyList.forEach(([code, name])=>{
-          const opt = document.createElement('option');
-          opt.value = code; opt.textContent = ${code} — ${name};
-          if(code === def) opt.selected = true;
-          el.appendChild(opt);
-        });
-      };
-      fill(ccFrom, 'USD');
-      fill(ccTo, 'PKR');
-    }
-    fillCurrencies();
-
-    function fmtAmount(n, code){
-      if (!isFinite(n)) return '';
-      const zeroish = ['JPY','PKR','IDR','LKR','NPR','BDT','KRW'];
-      const min = zeroish.includes(code) ? 0 : 2;
-      return new Intl.NumberFormat(undefined, { minimumFractionDigits: min, maximumFractionDigits: 4 }).format(n);
-    }
-
-    // Helper: fetch with timeout
-    async function fetchJSON(url, ms = 8000){
-      const ctl = new AbortController();
-      const t = setTimeout(()=>ctl.abort(), ms);
-      try{
-        const res = await fetch(url, { signal: ctl.signal, cache:'no-store' });
-        if(!res.ok) throw new Error(HTTP ${res.status});
-        return await res.json();
-      } finally {
-        clearTimeout(t);
-      }
-    }
-
-    // Get rate with fallbacks
-    async function getRate(from, to){
-      // 1) exchangerate.host convert
-      try{
-        const u = https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)};
-        const d = await fetchJSON(u);
-        const rate = d?.info?.rate;
-        const date = d?.date;
-        if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/convert' };
-        console.warn('convert returned invalid data', d);
-      }catch(e){ console.warn('convert failed', e); }
-
-      // 2) exchangerate.host latest
-      try{
-        const u = https://api.exchangerate.host/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)};
-        const d = await fetchJSON(u);
-        const rate = d?.rates?.[to];
-        const date = d?.date;
-        if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/latest' };
-        console.warn('latest returned invalid data', d);
-      }catch(e){ console.warn('latest failed', e); }
-
-      // 3) open.er-api.com latest
-      try{
-        const u = https://open.er-api.com/v6/latest/${encodeURIComponent(from)};
-        const d = await fetchJSON(u);
-        const rate = d?.rates?.[to];
-        const date = d?.time_last_update_utc || '';
-        if (typeof rate === 'number') return { rate, date, src: 'open.er-api.com' };
-        console.warn('er-api returned invalid data', d);
-      }catch(e){ console.warn('er-api failed', e); }
-
-      throw new Error('No provider returned a valid rate');
-    }
-
-    async function convertNow(){
-      const amount = parseFloat(ccAmount.value);
-      const from = ccFrom.value;
-      const to = ccTo.value;
-
-      if (!Number.isFinite(amount) || amount < 0) return showToast('صحیح رقم درج کریں', 'error');
-      if (!from || !to) return showToast('براہ کرم کرنسی منتخب کریں', 'error');
-      if (from === to) {
-        ccResult.textContent = ${fmtAmount(amount, from)} ${from} = ${fmtAmount(amount, to)} ${to};
-        ccRateInfo.textContent = 1 ${from} = 1 ${to};
-        return;
-      }
-      if (!navigator.onLine) {
-        showToast('انٹرنیٹ کنکشن موجود نہیں', 'error');
-        return;
-      }
-
-      ccConvert.disabled = true; const old = ccConvert.textContent; ccConvert.textContent = 'Converting...';
-      ccResult.textContent = 'Fetching live rate...'; ccRateInfo.textContent = '';
-
-      try{
-        const { rate, date, src } = await getRate(from, to);
-        const result = rate * amount;
-        ccResult.textContent = ${fmtAmount(amount, from)} ${from} = ${fmtAmount(result, to)} ${to};
-        ccRateInfo.textContent = 1 ${from} = ${fmtAmount(rate, to)} ${to} • ${date || '—'} • ${src};
-      }catch(err){
-        console.error('Conversion error:', err);
-        ccResult.textContent = 'Conversion failed.';
-        ccRateInfo.textContent = '';
-        showToast('Currency conversion میں مسئلہ آیا۔ بعد میں دوبارہ کوشش کریں۔', 'error');
-      }finally{
-        ccConvert.disabled = false; ccConvert.textContent = old;
-      }
-    }
-
-    ccConvert.addEventListener('click', convertNow);
-    ccSwap.addEventListener('click', ()=>{
-      const f = ccFrom.value; ccFrom.value = ccTo.value; ccTo.value = f;
-      if (ccAmount.value) convertNow();
-    });
-    ccClear.addEventListener('click', ()=>{
-      ccAmount.value = '';
-      ccFrom.value = 'USD';
-      ccTo.value = 'PKR';
-      ccResult.textContent = 'Enter amount and convert.';
-      ccRateInfo.textContent = '';
-    });
-    ccAmount.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); convertNow(); } });
-    ccFrom.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
-    ccTo.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
-
-    // Demo conversion on load
-    window.addEventListener('load', ()=>{ if (ccAmount.value) convertNow(); });
+    // Starfield (lightweight, no rotating box)
+    (()=>{
+      const canvas = document.getElementById('bg');
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight);
+      camera.position.z = 60;
+      const isMobile = innerWidth < 640, starCount = isMobile ? 1200 : 2400;
+      const geometry = new THREE.BufferGeometry(); const positions = new Float32Array(starCount*3);
+      for(let i=0;i<starCount;i++){ const r = 200*Math.cbrt(Math.random()), t = Math.random()*2*Math.PI, p = Math.acos(2*Math.random()-1);
+        positions[i*3] = r*Math.sin(p)*Math.cos(t); positions[i*3+1]= r*Math.sin(p)*Math.sin(t); positions[i*3+2]= r*Math.cos(p) }
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const material = new THREE.PointsMaterial({ color:0xbfe9ff, size:0.9, sizeAttenuation:true, transparent:true, opacity:.9, blending:THREE.AdditiveBlending });
+      const stars = new THREE.Points(geometry, material); scene.add(stars); scene.fog = new THREE.FogExp2(0x0b1020, 0.0025);
+      const animate=()=>{ requestAnimationFrame(animate); stars.rotation.y += 0.0008; stars.rotation.x -= 0.0002; renderer.render(scene, camera) }; animate();
+      addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight) }, {passive:true});
+    })();
   </script>
-
-  <!-- Three.js: ES Module (no deprecation warnings) -->
-  <script type="module">
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-
-    const canvas = document.getElementById('bg');
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(innerWidth, innerHeight);
-    camera.position.z = 60;
-
-    const isMobile = innerWidth < 640;
-    const starCount = isMobile ? 1200 : 2400;
-
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(starCount*3);
-    for(let i=0;i<starCount;i++){
-      const r = 200*Math.cbrt(Math.random());
-      const t = Math.random()*2*Math.PI;
-      const p = Math.acos(2*Math.random()-1);
-      positions[i*3]   = r*Math.sin(p)*Math.cos(t);
-      positions[i*3+1] = r*Math.sin(p)*Math.sin(t);
-      positions[i*3+2] = r*Math.cos(p);
-    }
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-    const material = new THREE.PointsMaterial({
-      color:0xbfe9ff, size:0.9, sizeAttenuation:true, transparent:true, opacity:.9
-    });
-
-    const stars = new THREE.Points(geometry, material);
-    scene.add(stars);
-    scene.fog = new THREE.FogExp2(0x0b1020, 0.0025);
-
-    const animate=()=>{ requestAnimationFrame(animate); stars.rotation.y += 0.0008; stars.rotation.x -= 0.0002; renderer.render(scene, camera) };
-    animate();
-
-    addEventListener('resize', ()=>{
-      camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight)
-    }, {passive:true});
-
-<button onclick="triggerEmails()">Send Emails</button>
-<p id="result"></p>
-
-<script>
-  async function triggerEmails() {
-    const resultEl = document.getElementById('result');
-    resultEl.textContent = 'Sending...';
-
-    const url = 'https://script.google.com/macros/s/AKfycbxmllG3Enb4fQwPm5t-cQfAJB43FWU48O4THC_Bq4gRQ1orAVTDHx0Y-M6_olDM2HlA/exec';
-<div id="output">Loading email data...</div>
-
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      resultEl.textContent = data.message || 'Done';
-    } catch (e) {
-      resultEl.textContent = '❌ Failed: ' + (e.message || e);
-    }
-  }
-
-  </script>
-</body>
-</html><!DOCTYPE html>
-<html>
-<head>
-    <title>SEO Collaboration Data</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f4f4;
-            padding: 20px;
-        }
-        #data-box {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
-            max-width: 600px;
-            margin: auto;
-        }
-        button {
-            background: #007BFF;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background: #f1f1f1;
-            padding: 10px;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div id="data-box">
-        <h2>SEO Collaboration Sheet Data</h2>
-        <button onclick="loadData()">Fetch Data</button>
-        <pre id="output">Click the button to fetch sheet data...</pre>
-    </div>
-
-    <script>
-        function loadData() {
-            fetch("https://script.google.com/macros/s/AKfycbzsMlil4V_pnKoT347myO5Z2ScXfBQ-3wFOCwuqdsy11ZiS00FhBr7WKzpgLhCp6Xs-/exec")
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("output").textContent = JSON.stringify(data, null, 2);
-                })
-                .catch(error => {
-                    document.getElementById("output").textContent = "Error: " + error;
-                });
-        }
-    </script>
 </body>
 </html>
 
