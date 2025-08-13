@@ -693,6 +693,178 @@
   </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Tracker Agency</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f2027;
+    color: white;
+    display: flex;
+    height: 100vh;
+  }
+  /* Split screen layout */
+  .left {
+    flex: 1;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 50px;
+  }
+  .left h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  .step {
+    margin-bottom: 20px;
+  }
+  .step-number {
+    font-size: 26px;
+    font-weight: bold;
+    color: #00e5ff;
+    margin-right: 10px;
+  }
+  .step-text {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  /* Right side login */
+  .right {
+    flex: 1;
+    background: radial-gradient(circle at top left, #1a2a3b, #0f2027);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .login-box {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 30px;
+    border-radius: 20px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
+    transform: perspective(1000px) rotateY(10deg);
+    transition: transform 0.3s ease;
+  }
+  .login-box:hover {
+    transform: perspective(1000px) rotateY(0deg);
+  }
+  input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+  }
+  button {
+    background: #00e5ff;
+    color: black;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background: #00c2d6;
+  }
+  #msg {
+    margin-top: 10px;
+    color: red;
+  }
+  @media (max-width: 768px) {
+    body {
+      flex-direction: column;
+    }
+    .left, .right {
+      flex: none;
+      width: 100%;
+      height: auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- LEFT SIDE -->
+<div class="left">
+  <h1>SEO Tracker Agency</h1>
+  <div class="step">
+    <div class="step-item">
+      <div class="step-number">1</div>
+      <div class="step-text">Track all your SEO campaigns in one place.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-item">
+      <div class="step-number">2</div>
+      <div class="step-text">Manage client reports and updates instantly.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-item">
+      <div class="step-number">3</div>
+      <div class="step-text">Collaborate with your team in real-time.</div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT SIDE -->
+<div class="right">
+  <div class="login-box">
+    <input type="email" id="email" placeholder="Email"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+    <p id="msg"></p>
+  </div>
+</div>
+
+<script>
+function login() {
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("password").value;
+
+  // Replace this with your actual API or Apps Script endpoint
+  fetch("https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec", {
+    method: "POST",
+    body: JSON.stringify({email: email, password: password}),
+    headers: {"Content-Type": "application/json"}
+  })
+  .then(res => res.json())
+  .then(result => {
+    if (result.status === "success") {
+      if (result.role === "admin") {
+        window.location.href = "https://your-admin-dashboard-url.com";
+      } else if (result.role === "user") {
+        window.location.href = "https://sabahameednoor-source.github.io/webapp-seo/";
+      }
+    } else {
+      document.getElementById("msg").innerText = result.message;
+    }
+  })
+  .catch(err => {
+    document.getElementById("msg").innerText = "Error connecting to server.";
+  });
+}
+</script>
+
+</body>
+</html>
 
 
   
