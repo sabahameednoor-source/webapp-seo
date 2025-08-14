@@ -110,6 +110,19 @@
   </script>
 </body>
 </html>
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    var email = document.getElementById("email").value.trim();
+    var password = document.getElementById("password").value.trim();
+
+    if (email === "sabaseoexpert36@gmail.com" && password === "123") {
+        window.location.href = "https://sabahameednoor-source.github.io/webapp-seo/";
+    } else {
+        alert("Invalid email or password");
+    }
+});
+</script>
 
 
 
