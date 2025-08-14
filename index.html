@@ -1,214 +1,690 @@
-
-   <!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <title>SEO Tracker Agency</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <title>SEO Tracker Agency — Login + SEO Tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    :root{
+      --bg:#0b1020; --card: rgba(255,255,255,0.06); --stroke: rgba(255,255,255,0.16);
+      --txt:#e7f2ff; --muted:#a9bfd6; --accent1:#00d4ff; --accent2:#7c4dff; --accent3:#ff2bd6; --ok:#0ad3a7; --err:#ff6b6b;
+      color-scheme: dark;
     }
-    .container {
-      display: flex;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 0 30px rgba(0,0,0,0.5);
-      max-width: 900px;
-      width: 100%;
+    *{box-sizing:border-box} html,body{height:100%}
+    body{ margin:0; color:var(--txt); background:var(--bg);
+      font-family:"Poppins",system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow:auto }
+
+    /* Background */
+    #bg{ position:fixed; inset:0; z-index:0 }
+    .veil{ position:fixed; inset:0; z-index:0; background:
+      radial-gradient(1200px 800px at 70% 30%, rgba(124,77,255,0.12), transparent 60%),
+      radial-gradient(900px 700px at 20% 75%, rgba(0,212,255,0.10), transparent 60%) }
+
+    /* Layout */
+    .wrap{ position:relative; z-index:1; min-height:100vh; display:grid; grid-template-rows:auto 1fr; gap:14px; padding:32px 16px; }
+    .title{ margin:0; font-weight:800; letter-spacing:.5px; font-size: clamp(24px, 4vw, 34px);
+      background: linear-gradient(90deg, var(--accent1), var(--accent3), var(--accent2));
+      -webkit-background-clip:text; background-clip:text; color: transparent; text-transform: uppercase; }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-size:.98rem }
+
+    /* Tabs */
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px }
+    .tab-btn{ background: rgba(255,255,255,0.06); border:1px solid var(--stroke); color:var(--txt);
+      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; transition:.2s }
+    .tab-btn:hover{ transform: translateY(-2px); border-color: rgba(0,212,255,0.45); background: rgba(0,212,255,0.10) }
+    .tab-btn:active{ transform: translateY(0) }
+    .tab-btn.active{ background: linear-gradient(90deg, rgba(0,212,255,0.18), rgba(124,77,255,0.18)); border-color: rgba(0,212,255,0.45) }
+
+    /* Panes */
+    .panes{ margin-top:12px }
+    .pane{ display:none }
+    .pane.active{ display:block }
+
+    .card{ width:100%; max-width:1180px; margin:0 auto; padding:24px; border-radius:18px; background:var(--card); border:1px solid var(--stroke);
+      backdrop-filter: blur(12px) saturate(130%); box-shadow: 0 12px 36px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.02); position:relative; overflow:hidden }
+
+    .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px }
+    .full{ grid-column: 1/-1 }
+
+    label{ display:block; margin:0 0 8px; font-size:.92rem; color:#d6e8ff }
+    .hint{ font-size:.8rem; color:var(--muted); margin-top:6px }
+
+    input, select, textarea{
+      width:100%; color:var(--txt); background: rgba(255,255,255,0.07);
+      border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:12px 14px; outline:none; transition:.25s ease; font-size:.98rem
     }
-    .info {
-      flex: 1;
-      padding: 30px;
-      background: rgba(0, 0, 0, 0.3);
+    textarea{ min-height:110px; resize: vertical }
+    input::placeholder, textarea::placeholder{ color:#9ab4c9 }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(0,212,255,0.75); box-shadow: 0 0 0 3px rgba(0,212,255,0.25), inset 0 0 8px rgba(0,212,255,0.18); transform: translateY(-1px)
     }
-    .info h2 {
-      color: #ff9800;
-      margin-bottom: 15px;
+
+    /* Buttons */
+    .actions{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; margin-top:8px }
+    .btn{ position: relative; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 18px; border-radius:14px; border:1px solid transparent; font-weight:700;
+      cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; transition:.2s ease; }
+    .btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none !important; box-shadow:none !important }
+    .btn-primary{ color:#fff; background: linear-gradient(90deg, var(--accent1), var(--accent2)); box-shadow: 0 10px 24px rgba(124,77,255,0.35) }
+    .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 30px rgba(124,77,255,0.5) }
+    .btn-outline{ color:#dfe5ff; background: transparent; border-color: rgba(255,255,255,0.16) }
+    .btn-outline:hover{ border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); transform: translateY(-2px) }
+    .btn-ghost{ color:#e6e8f0; background: rgba(255,255,255,0.02) }
+    .btn-ghost:hover{ background: rgba(255,255,255,0.06); transform: translateY(-2px) }
+
+    /* Toast (Urdu capable) */
+    .toast{
+      position: fixed; left:50%; bottom:26px; transform: translateX(-50%) translateY(16px);
+      background: rgba(0, 10, 18, 0.78); color:#eaffff; border:1px solid rgba(10, 211, 167, 0.45);
+      border-radius:14px; padding:12px 16px; z-index: 9999; min-width: 280px; max-width:92vw;
+      box-shadow: 0 0 16px rgba(10,211,167,0.35), inset 0 0 20px rgba(10,211,167,0.12);
+      backdrop-filter: blur(10px); font-family: "Noto Nastaliq Urdu","Poppins",sans-serif; direction: rtl;
+      opacity:0; pointer-events:none; transition:.3s
     }
-    .info ul {
-      list-style: none;
-      padding: 0;
+    .toast.error{ border-color: rgba(255, 107, 107, 0.55); box-shadow: 0 0 16px rgba(255,107,107,0.35), inset 0 0 20px rgba(255,107,107,0.12) }
+    .toast.show{ opacity:1; transform: translateX(-50%) translateY(0) }
+
+    /* Currency small info box */
+    .rate-box{ background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 14px; line-height: 1.5; min-height: 72px; }
+    .rate-main{ font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+    .rate-sub{ color: var(--muted); font-size: .92rem; }
+
+    /* LOGIN split */
+    .login-grid{ display:grid; grid-template-columns: 1.2fr .8fr; gap:22px; align-items:center }
+    .features{
+      padding: 10px 6px 10px 10px;
     }
-    .info li {
-      margin-bottom: 10px;
-      padding-left: 20px;
-      position: relative;
+    .feat-title{
+      font-size:clamp(22px,3.2vw,30px);
+      font-weight:800; letter-spacing:.5px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent3), var(--accent2));
+      -webkit-background-clip:text; background-clip:text; color: transparent;
+      margin:0 0 14px 0;
     }
-    .info li::before {
-      content: "✔";
-      position: absolute;
-      left: 0;
-      color: #ff9800;
+    .feat{
+      display:flex; gap:12px; align-items:flex-start; padding:12px 12px; border-radius:14px;
+      background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.10); margin-bottom:10px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
     }
-    .login-box {
-      flex: 1;
-      padding: 30px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.1);
+    .feat-num{
+      min-width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+      font-weight:800; background: linear-gradient(180deg, rgba(0,212,255,.25), rgba(124,77,255,.25));
+      border:1px solid rgba(0,212,255,.45);
     }
-    .login-box h2 {
-      margin-bottom: 20px;
-      text-align: center;
+    .feat p{ margin:0; color:#dbe7ff; font-size:.98rem }
+    .feat small{ display:block; color:var(--muted); margin-top:4px }
+
+    .login-wrap{
+      perspective: 1200px;
+      display:flex; justify-content:center; align-items:center;
     }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 5px;
+    .login-card{
+      width: min(360px, 92vw); padding: 24px 20px 18px; text-align:center;
+      background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.16);
+      border-radius: 20px; box-shadow: 0 0 30px rgba(0, 229, 255, 0.35);
+      transform: rotateY(0deg) rotateX(0deg); transition: transform .2s ease;
+      will-change: transform;
     }
-    button {
-      background: #ff9800;
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      width: 100%;
-      font-size: 16px;
+    .login-card h3{ margin:0 0 12px; font-weight:800; letter-spacing:.4px }
+    .login-card .sub{ margin:0 0 14px; color:var(--muted); font-size:.95rem }
+    .login-card input{ width:100% }
+    .login-card button{ width:100% }
+
+    .help{ margin-top:10px; color:var(--muted); font-size:.88rem }
+
+    @media (max-width: 980px){
+      .login-grid{ grid-template-columns: 1fr; }
     }
-    button:hover {
-      background: #e68900;
-    }
-    #msg {
-      color: red;
-      text-align: center;
-      margin-top: 10px;
+    @media (max-width: 900px){
+      .grid{ grid-template-columns:1fr }
+      .wrap{ padding:20px 12px }
     }
   </style>
 </head>
 <body>
+  <!-- Background -->
+  <canvas id="bg"></canvas>
+  <div class="veil" aria-hidden="true"></div>
 
-<div class="container">
-  <!-- Left side info -->
-  <div class="info">
-    <h2>Our Features</h2>
-    <ul>
-      <li>Send Daily Bulk Emails to Clients with one click</li>
-      <li>Pitch SEO Companies via email trigger</li>
-      <li>Send Auto Personalized Messages via trigger</li>
-      <li>Check Currency Exchange Rate instantly</li>
-      <li>Send invoices with auto PDF attachment</li>
-      <li>Send up to 150 emails via trigger</li>
-    </ul>
-  </div>
-
-  <!-- Right side login -->
-  <div class="login-box">
-    <h2>Login</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p id="msg"></p>
-  </div>
-</div>
-
-<script>
-  function login() {
-    var email = document.getElementById("email").value.trim();
-    var password = document.getElementById("password").value.trim();
-    var msg = document.getElementById("msg");
-
-    if (email === "sabaseoexpert36@gmail.com" && password === "123") {
-      window.location.href = "https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec";
-    } else if (email === "sabahameednoor@gmail.com" && password === "1234") {
-      window.location.href = "https://sabahameednoor-source.github.io/webapp-seo/";
-    } else {
-      msg.innerText = "Invalid email or password!";
- }
-  }
-</script>
-
-</body>
-</html>
-  
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SEO Web App</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background-color: black;
-      color: white;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-      padding: 40px;
-      box-sizing: border-box;
-    }
-    .left {
-      flex: 1;
-      padding-right: 40px;
-    }
-    .left ol {
-      list-style: none;
-      padding: 0;
-    }
-    .left ol li {
-      margin-bottom: 20px;
-      font-size: 20px;
-      font-weight: bold;
-      line-height: 1.4em;
-    }
-    .left ol li span {
-      color: #4db6ac;
-      font-weight: bold;
-      margin-right: 8px;
-      font-size: 22px;
-    }
-    .right {
-      flex: 1;
-      background: white;
-      color: black;
-      border-radius: 8px;
-      padding: 20px;
-    }
-    iframe {
-      width: 100%;
-      height: 90vh;
-      border: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Left Side Points -->
-    <div class="left">
-      <ol>
-        <li><span>1.</span> SEND DAILY BULK EMAILS TO CLIENTS WITH JUST ONE CLICK THROUGH EMAIL SENDING BUTTON</li>
-        <li><span>2.</span> PITCH SEO COMPANIES TO OFFER YOUR SERVICES WITH SENDING EMAILS IN JUST ONE CLICK BY SETTING TRIGGER</li>
-        <li><span>3.</span> SEND AUTO PERSONALIZED MESSAGES IN JUST SETTING TRIGGER</li>
-        <li><span>4.</span> YOU CAN SET CURRENCY EXCHANGE RATE WITH JUST ONE CLICK TO CHECK CURRENCY RATE</li>
-        <li><span>5.</span> SEND INVOICE WITH AUTO SETTING EMAIL WITH PDF</li>
-        <li><span>6.</span> SENDING 150 EMAILS BY SETTING TRIGGER</li>
-      </ol>
+  <div class="wrap">
+    <div>
+      <h1 class="title">SEO TRACKER AGENCY</h1>
+      <p class="subtitle">Login • SEO Request Form • OCR • PDF → Text • Translate • Currency Converter</p>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="login">Login</button>
+        <button class="tab-btn" data-tab="form">SEO Form</button>
+        <button class="tab-btn" data-tab="ocr">OCR</button>
+        <button class="tab-btn" data-tab="pdf">PDF → Text</button>
+        <button class="tab-btn" data-tab="translate">Translate</button>
+        <button class="tab-btn" data-tab="currency">Currency</button>
+      </div>
     </div>
 
-    <!-- Right Side Form -->
-    <div class="right">
-      <iframe src="https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec"></iframe>
+    <div class="panes">
+
+      <!-- LOGIN (split: features left, 3D login right) -->
+      <div id="pane-login" class="card pane active">
+        <div class="login-grid">
+          <!-- LEFT: Features list -->
+          <div class="features">
+            <h2 class="feat-title">SEO Tracker Agency — Power Features</h2>
+
+            <div class="feat">
+              <div class="feat-num">1</div>
+              <div>
+                <p>Send Daily Bulk Emails to Clients with one click</p>
+                <small>Use Email Button + trigger to schedule daily outreach.</small>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-num">2</div>
+              <div>
+                <p>Pitch SEO Companies via automated trigger</p>
+                <small>Offer your services by sending pre-set email pitches.</small>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-num">3</div>
+              <div>
+                <p>Auto-Personalized Messages with trigger</p>
+                <small>Personalize at scale — name, service, next steps auto-fill.</small>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-num">4</div>
+              <div>
+                <p>One-click Currency Exchange Rate</p>
+                <small>Check live conversion inside the app.</small>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-num">5</div>
+              <div>
+                <p>Send Invoice via Email (PDF Auto-Attach)</p>
+                <small>Attach invoice PDF automatically with email workflow.</small>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-num">6</div>
+              <div>
+                <p>Send up to ~150 emails with trigger</p>
+                <small>Configure time-based triggers to batch send.</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: 3D/Tilt Login -->
+          <div class="login-wrap">
+            <div id="loginCard" class="login-card">
+              <h3>Sign in</h3>
+              <p class="sub">Admin ya User credentials dalen</p>
+              <input type="email" id="email" placeholder="Email" autocomplete="username"><br><br>
+              <input type="password" id="password" placeholder="Password" autocomplete="current-password"><br><br>
+              <button id="btnLogin" class="btn btn-primary" type="button">Login</button>
+              <p id="msg" class="help"></p>
+              <p class="help">Admin: <b>sabaseoexpert36@gmail.com / 123</b><br>User: <b>sab ahameednoor@gmail.com / 1234</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO FORM -->
+      <form id="seoForm" class="card pane" autocomplete="on">
+        <div class="grid">
+          <div>
+            <label for="name">Name</label>
+            <input id="name" name="name" required placeholder="Your full name" />
+          </div>
+          <div>
+            <label for="contact">Phone No / Email Address</label>
+            <input id="contact" name="contact" required placeholder="+92 3xx xxx xxxx or you@example.com" />
+          </div>
+          <div class="full">
+            <label for="facebook">Facebook ID or Page Link</label>
+            <input id="facebook" name="facebook" type="url" placeholder="https://facebook.com/yourpage" />
+            <div class="hint">Optional — paste your Facebook profile or page URL.</div>
+          </div>
+          <div>
+            <label for="service">Service (You Want From Me)</label>
+            <select id="service" name="service" required>
+              <option value="" disabled selected>Select an SEO service</option>
+              <option>Technical SEO Audit</option>
+              <option>On-Page Optimization</option>
+              <option>Keyword Research & Mapping</option>
+              <option>Content Strategy & Briefs</option>
+              <option>Link Building & Digital PR</option>
+              <option>Local SEO (GBP + Citations)</option>
+              <option>Site Speed & Core Web Vitals</option>
+              <option>Analytics & Tag Manager Setup</option>
+              <option>Monthly SEO Management</option>
+            </select>
+          </div>
+          <div>
+            <label for="autoreply">Auto Reply</label>
+            <input id="autoreply" name="autoreply" placeholder="Your preferred auto-reply (optional)" />
+          </div>
+        </div>
+        <div class="actions">
+          <button id="submitBtn" class="btn btn-primary" type="submit">Submit Request</button>
+          <button type="reset" class="btn btn-outline">Clear</button>
+        </div>
+      </form>
+
+      <!-- OCR -->
+      <div id="pane-ocr" class="card pane">
+        <div class="grid">
+          <div class="full">
+            <label>Image for OCR (PNG/JPG)</label>
+            <input id="ocrFile" type="file" accept="image/*" />
+            <div class="hint">Drag & drop or choose an image with text.</div>
+          </div>
+          <div class="full">
+            <label>Extracted Text</label>
+            <pre id="ocrOut" style="white-space:pre-wrap;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;min-height:90px;"></pre>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="btnOcr" class="btn btn-primary" type="button">Run OCR</button>
+          <button id="btnOcrClear" class="btn btn-ghost" type="button">Clear</button>
+        </div>
+      </div>
+
+      <!-- PDF → TEXT -->
+      <div id="pane-pdf" class="card pane">
+        <div class="grid">
+          <div class="full">
+            <label>Upload PDF</label>
+            <input id="pdfFile" type="file" accept="application/pdf" />
+            <div class="hint">Extract clean text (text-based PDFs recommended).</div>
+          </div>
+          <div class="full">
+            <label>Extracted Text</label>
+            <textarea id="pdfOut" placeholder="Extracted text will appear here..."></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="btnPdfText" class="btn btn-primary" type="button">Extract Text</button>
+          <button id="btnPdfClear" class="btn btn-ghost" type="button">Clear</button>
+        </div>
+      </div>
+
+      <!-- TRANSLATE -->
+      <div id="pane-translate" class="card pane">
+        <div class="grid">
+          <div class="full">
+            <label>Source Text</label>
+            <textarea id="trSrc" placeholder="Paste text to translate"></textarea>
+          </div>
+          <div>
+            <label>Target Language</label>
+            <select id="trLang">
+              <option value="Urdu" selected>Urdu</option>
+              <option value="English">English</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Hindi">Hindi</option>
+            </select>
+          </div>
+          <div class="full">
+            <label>Translated</label>
+            <textarea id="trOut" placeholder="Translation will appear here..."></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="btnTranslate" class="btn btn-primary" type="button">Translate</button>
+          <button id="btnTrClear" class="btn btn-ghost" type="button">Clear</button>
+        </div>
+      </div>
+
+      <!-- CURRENCY -->
+      <div id="pane-currency" class="card pane">
+        <div class="grid">
+          <div>
+            <label for="ccAmount">Amount / رقم</label>
+            <input id="ccAmount" type="number" min="0" step="0.01" placeholder="e.g., 100" value="100" />
+          </div>
+          <div>
+            <label for="ccFrom">Source currency / سورس کرنسی</label>
+            <select id="ccFrom"></select>
+          </div>
+          <div>
+            <label for="ccTo">Target currency / مطلوبہ کرنسی</label>
+            <select id="ccTo"></select>
+          </div>
+          <div class="full rate-box">
+            <div id="ccResult" class="rate-main">Enter amount and convert.</div>
+            <div id="ccRateInfo" class="rate-sub"></div>
+          </div>
+        </div>
+        <div class="actions" style="justify-content:space-between;">
+          <div>
+            <button id="ccConvert" class="btn btn-primary" type="button">Convert</button>
+            <button id="ccSwap" class="btn btn-outline" type="button">Swap</button>
+            <button id="ccClear" class="btn btn-ghost" type="button">Clear</button>
+          </div>
+          <div class="hint">Live rates via exchangerate.host — pure HTML + JS</div>
+        </div>
+      </div>
+
     </div>
   </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- App logic (non-module) -->
+  <script>
+    // ====== CONFIG ======
+    // 1) Apps Script endpoint for saving SEO form + tools (already working one)
+    const GAS_WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
+
+    // 2) LOGIN endpoint (Apps Script where 'action=login' returns {status, role, redirect?})
+    //    Tumne yahi link diya hai — isi par login POST jayega:
+    const LOGIN_GAS_URL    = "https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec";
+
+    // 3) Admin successful login redirect:
+    const ADMIN_REDIRECT   = "https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec";
+
+    // ====== Tabs ======
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panes = {
+      login: document.getElementById('pane-login'),
+      form: document.getElementById('seoForm'),
+      ocr: document.getElementById('pane-ocr'),
+      pdf: document.getElementById('pane-pdf'),
+      translate: document.getElementById('pane-translate'),
+      currency: document.getElementById('pane-currency'),
+    };
+    function openTab(name){
+      tabs.forEach(b=> b.classList.toggle('active', b.dataset.tab===name));
+      Object.entries(panes).forEach(([k,p])=> p.classList.toggle('active', k===name));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    tabs.forEach(btn=> btn.addEventListener('click', ()=> openTab(btn.dataset.tab)));
+
+    // ====== Toast ======
+    const toastEl = document.getElementById('toast');
+    function showToast(msg, type='ok', ms=3400){
+      toastEl.textContent = msg;
+      toastEl.className = 'toast' + (type==='error' ? ' error' : '');
+      toastEl.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> toastEl.classList.remove('show'), ms);
+    }
+
+    // ====== Helpers ======
+    async function postFD(fd){
+      const res = await fetch(GAS_WEB_APP_URL, { method:'POST', body: fd });
+      if(!res.ok){ throw new Error(await res.text()); }
+      return res.json();
+    }
+
+    // ====== LOGIN (tilt + API) ======
+    const loginCard = document.getElementById('loginCard');
+    const emailEl = document.getElementById('email');
+    const passEl  = document.getElementById('password');
+    const btnLogin = document.getElementById('btnLogin');
+    const msgEl = document.getElementById('msg');
+
+    // Subtle tilt on mouse, pause on focus/typing
+    let tiltPaused = false;
+    function setTilt(e){
+      if(tiltPaused) return;
+      const r = loginCard.getBoundingClientRect();
+      const cx = r.left + r.width/2, cy = r.top + r.height/2;
+      const dx = (e.clientX - cx) / r.width;   // -0.5 .. 0.5
+      const dy = (e.clientY - cy) / r.height;  // -0.5 .. 0.5
+      const rotY = dx * 10; // deg
+      const rotX = -dy * 6; // deg
+      loginCard.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+    }
+    function resetTilt(){ if(!tiltPaused) loginCard.style.transform = 'rotateY(0deg) rotateX(0deg)'; }
+
+    loginCard.addEventListener('mousemove', setTilt);
+    loginCard.addEventListener('mouseleave', resetTilt);
+    [emailEl, passEl].forEach(el=>{
+      el.addEventListener('focus', ()=>{ tiltPaused = true; loginCard.style.transform='rotateY(0deg) rotateX(0deg)'; });
+      el.addEventListener('blur',  ()=>{ tiltPaused = false; });
+    });
+
+    async function login(){
+      msgEl.textContent = '';
+      const email = emailEl.value.trim();
+      const password = passEl.value.trim();
+      if(!email || !password){ msgEl.textContent = 'Email aur password required hai.'; return; }
+
+      btnLogin.disabled = true; const old = btnLogin.textContent; btnLogin.textContent = 'Checking...';
+
+      try{
+        // Apps Script ko JSON body: {action:"login", email, password}
+        const res = await fetch(LOGIN_GAS_URL, {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ action:"login", email, password })
+        });
+        const data = await res.json();
+
+        if(data.status === "success"){
+          if (data.role === "admin"){
+            window.location.href = ADMIN_REDIRECT;
+          } else if (data.role === "user"){
+            showToast('Welcome! User login successful ✅');
+            openTab('form'); // user ko yahin SEO Form dikhāo
+          } else {
+            showToast('Unknown role. Redirecting to form.', 'error');
+            openTab('form');
+          }
+        }else{
+          msgEl.textContent = data.message || 'Invalid email/password.';
+        }
+      }catch(err){
+        console.error(err);
+        msgEl.textContent = 'Server se connection error.';
+      }finally{
+        btnLogin.disabled = false; btnLogin.textContent = old;
+      }
+    }
+    btnLogin.addEventListener('click', login);
+    passEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); login(); } });
+
+    // ====== SEO FORM ======
+    const form = document.getElementById('seoForm'), submitBtn = document.getElementById('submitBtn');
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault(); submitBtn.disabled = true; const old = submitBtn.textContent; submitBtn.textContent = 'Submitting...';
+      try{
+        const fd = new FormData(form); fd.append('action','save');
+        const res = await postFD(fd);
+        if(res.ok){ showToast('آپ کا فارم کامیابی سے جمع ہو چکا ہے ✅'); form.reset(); }
+        else{ showToast('معذرت! فارم جمع کرنے میں مسئلہ آیا۔', 'error'); }
+      }catch(err){ showToast('نیٹ ورک خرابی۔ براہ کرم اپنا انٹرنیٹ چیک کریں۔', 'error'); }
+      finally{ submitBtn.disabled = false; submitBtn.textContent = old; }
+    });
+
+    // ====== OCR ======
+    const ocrFile = document.getElementById('ocrFile'), ocrOut = document.getElementById('ocrOut');
+    document.getElementById('btnOcr').addEventListener('click', async ()=>{
+      if(!ocrFile.files[0]) return showToast('براہ کرم تصویر منتخب کریں', 'error');
+      ocrOut.textContent = 'Processing...';
+      try{
+        const fd = new FormData(); fd.append('action','ocr'); fd.append('file', ocrFile.files[0]);
+        const { text } = await postFD(fd);
+        ocrOut.textContent = text || '(no text found)';
+      }catch(e){ ocrOut.textContent=''; showToast('OCR ناکام رہا۔', 'error'); }
+    });
+    document.getElementById('btnOcrClear').addEventListener('click', ()=>{ ocrFile.value=''; ocrOut.textContent=''; });
+
+    // ====== PDF → TEXT ======
+    const pdfFile = document.getElementById('pdfFile'), pdfOut = document.getElementById('pdfOut');
+    document.getElementById('btnPdfText').addEventListener('click', async ()=>{
+      if(!pdfFile.files[0]) return showToast('براہ کرم PDF منتخب کریں', 'error');
+      pdfOut.value = 'Extracting...';
+      try{
+        const fd = new FormData(); fd.append('action','pdftext'); fd.append('file', pdfFile.files[0]);
+        const { text } = await postFD(fd);
+        pdfOut.value = text || '(no text found)';
+      }catch(e){ pdfOut.value=''; showToast('PDF extraction ناکام رہا۔', 'error'); }
+    });
+    document.getElementById('btnPdfClear').addEventListener('click', ()=>{ pdfFile.value=''; pdfOut.value=''; });
+
+    // ====== Translate ======
+    document.getElementById('btnTranslate').addEventListener('click', async ()=>{
+      const text = document.getElementById('trSrc').value.trim();
+      const targetLang = document.getElementById('trLang').value;
+      if(!text) return showToast('متن درکار ہے', 'error');
+      const out = document.getElementById('trOut'); out.value = 'Translating...';
+      try{
+        const fd = new FormData(); fd.append('action','translate'); fd.append('text', text); fd.append('targetLang', targetLang);
+        const { result } = await postFD(fd);
+        out.value = result || '';
+      }catch(e){ out.value=''; showToast('ترجمہ ناکام رہا۔', 'error'); }
+    });
+    document.getElementById('btnTrClear').addEventListener('click', ()=>{
+      document.getElementById('trSrc').value=''; document.getElementById('trOut').value='';
+    });
+
+    // ====== Currency (HTML, live API) ======
+    const currencyList = [
+      ['USD','US Dollar'], ['PKR','Pakistani Rupee'], ['EUR','Euro'], ['GBP','British Pound'],
+      ['INR','Indian Rupee'], ['AED','UAE Dirham'], ['SAR','Saudi Riyal'], ['AUD','Australian Dollar'],
+      ['CAD','Canadian Dollar'], ['CNY','Chinese Yuan'], ['JPY','Japanese Yen'], ['TRY','Turkish Lira'],
+      ['BDT','Bangladeshi Taka'], ['LKR','Sri Lankan Rupee'], ['NPR','Nepalese Rupee'], ['MYR','Malaysian Ringgit'],
+      ['THB','Thai Baht'], ['IDR','Indonesian Rupiah'], ['SEK','Swedish Krona'], ['CHF','Swiss Franc'],
+      ['ZAR','South African Rand'], ['KWD','Kuwaiti Dinar'], ['QAR','Qatari Riyal'], ['OMR','Omani Rial'],
+      ['BHD','Bahraini Dinar'], ['NGN','Nigerian Naira'], ['PHP','Philippine Peso'], ['KRW','South Korean Won']
+    ];
+    const ccFrom = document.getElementById('ccFrom');
+    const ccTo = document.getElementById('ccTo');
+    const ccAmount = document.getElementById('ccAmount');
+    const ccResult = document.getElementById('ccResult');
+    const ccRateInfo = document.getElementById('ccRateInfo');
+    const ccConvert = document.getElementById('ccConvert');
+    const ccSwap = document.getElementById('ccSwap');
+    const ccClear = document.getElementById('ccClear');
+
+    function fillCurrencies(){
+      const fill = (el, def) => {
+        el.innerHTML = '';
+        currencyList.forEach(([code, name])=>{
+          const opt = document.createElement('option');
+          opt.value = code; opt.textContent = `${code} — ${name}`;
+          if(code === def) opt.selected = true;
+          el.appendChild(opt);
+        });
+      };
+      fill(ccFrom, 'USD'); fill(ccTo, 'PKR');
+    }
+    fillCurrencies();
+
+    function fmtAmount(n, code){
+      if (!isFinite(n)) return '';
+      const zeroish = ['JPY','PKR','IDR','LKR','NPR','BDT','KRW'];
+      const min = zeroish.includes(code) ? 0 : 2;
+      return new Intl.NumberFormat(undefined, { minimumFractionDigits: min, maximumFractionDigits: 4 }).format(n);
+    }
+    async function fetchJSON(url, ms = 8000){
+      const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), ms);
+      try{
+        const res = await fetch(url, { signal: ctl.signal, cache:'no-store' });
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } finally { clearTimeout(t); }
+    }
+    async function getRate(from, to){
+      try{
+        const u = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+        const d = await fetchJSON(u);
+        const rate = d?.info?.rate, date = d?.date;
+        if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/convert' };
+      }catch(e){}
+      try{
+        const u = `https://api.exchangerate.host/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)}`;
+        const d = await fetchJSON(u);
+        const rate = d?.rates?.[to], date = d?.date;
+        if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/latest' };
+      }catch(e){}
+      try{
+        const u = `https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`;
+        const d = await fetchJSON(u);
+        const rate = d?.rates?.[to], date = d?.time_last_update_utc || '';
+        if (typeof rate === 'number') return { rate, date, src: 'open.er-api.com' };
+      }catch(e){}
+      throw new Error('No provider returned a valid rate');
+    }
+    async function convertNow(){
+      const amount = parseFloat(ccAmount.value);
+      const from = ccFrom.value, to = ccTo.value;
+      if (!Number.isFinite(amount) || amount < 0) return showToast('صحیح رقم درج کریں', 'error');
+      if (!from || !to) return showToast('براہ کرم کرنسی منتخب کریں', 'error');
+      if (from === to) {
+        ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(amount, to)} ${to}`;
+        ccRateInfo.textContent = `1 ${from} = 1 ${to}`; return;
+      }
+      if (!navigator.onLine) return showToast('انٹرنیٹ کنکشن موجود نہیں', 'error');
+
+      ccConvert.disabled = true; const old = ccConvert.textContent; ccConvert.textContent = 'Converting...';
+      ccResult.textContent = 'Fetching live rate...'; ccRateInfo.textContent = '';
+      try{
+        const { rate, date, src } = await getRate(from, to);
+        const result = rate * amount;
+        ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(result, to)} ${to}`;
+        ccRateInfo.textContent = `1 ${from} = ${fmtAmount(rate, to)} ${to} • ${date || '—'} • ${src}`;
+      }catch(err){
+        ccResult.textContent = 'Conversion failed.'; ccRateInfo.textContent = '';
+        showToast('Currency conversion میں مسئلہ آیا۔', 'error');
+      }finally{ ccConvert.disabled = false; ccConvert.textContent = old; }
+    }
+    ccConvert.addEventListener('click', convertNow);
+    ccSwap.addEventListener('click', ()=>{ const f = ccFrom.value; ccFrom.value = ccTo.value; ccTo.value = f; if (ccAmount.value) convertNow(); });
+    ccClear.addEventListener('click', ()=>{ ccAmount.value = ''; ccFrom.value = 'USD'; ccTo.value = 'PKR'; ccResult.textContent = 'Enter amount and convert.'; ccRateInfo.textContent = ''; });
+    ccAmount.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); convertNow(); } });
+    ccFrom.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
+    ccTo.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
+    window.addEventListener('load', ()=>{ if (ccAmount.value) convertNow(); });
+  </script>
+
+  <!-- Three.js: lightweight starfield background -->
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+    const canvas = document.getElementById('bg');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    camera.position.z = 60;
+
+    const isMobile = innerWidth < 640;
+    const starCount = isMobile ? 1200 : 2400;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(starCount*3);
+    for(let i=0;i<starCount;i++){
+      const r = 200*Math.cbrt(Math.random());
+      const t = Math.random()*2*Math.PI;
+      const p = Math.acos(2*Math.random()-1);
+      positions[i*3]   = r*Math.sin(p)*Math.cos(t);
+      positions[i*3+1] = r*Math.sin(p)*Math.sin(t);
+      positions[i*3+2] = r*Math.cos(p);
+    }
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const material = new THREE.PointsMaterial({ color:0xbfe9ff, size:0.9, sizeAttenuation:true, transparent:true, opacity:.9 });
+    const stars = new THREE.Points(geometry, material);
+    scene.add(stars);
+    scene.fog = new THREE.FogExp2(0x0b1020, 0.0025);
+
+    const animate=()=>{ requestAnimationFrame(animate); stars.rotation.y += 0.0008; stars.rotation.x -= 0.0002; renderer.render(scene, camera) };
+    animate();
+    addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight) }, {passive:true});
+  </script>
 </body>
 </html>
+
+
 
  
    
