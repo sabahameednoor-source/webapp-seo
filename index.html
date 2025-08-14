@@ -2,9 +2,17 @@
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
-  <title>SEO SERVICES — AI Tools + Currency + Email/Directory</title>
+  <title>SEO SERVICES — AI Tools + Currency + Utilities</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- OCR (Tesseract) & PDF.js (client-side) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.min.js"></script>
+  <script>
+    // PDF.js worker (required)
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.js';
+  </script>
 
   <style>
     :root{
@@ -13,7 +21,8 @@
       color-scheme: dark;
     }
     *{box-sizing:border-box} html,body{height:100%}
-    body{ margin:0; color:var(--txt); background:var(--bg); font-family:"Poppins",system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow:auto }
+    body{ margin:0; color:var(--txt); background:var(--bg);
+      font-family:"Poppins",system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow:auto; }
 
     /* Background */
     #bg{ position:fixed; inset:0; z-index:0 }
@@ -60,133 +69,55 @@
       border-color: rgba(0,212,255,0.75); box-shadow: 0 0 0 3px rgba(0,212,255,0.25), inset 0 0 8px rgba(0,212,255,0.18); transform: translateY(-1px)
     }
 
-    .actions{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; margin-top:8px }
-    .right-actions{ display:flex; gap:10px; flex-wrap:wrap }
+    .actions{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; margin-top:8px }
 
     /* Buttons */
-    .btn{
-      position: relative; display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 18px; border-radius:14px; border:1px solid transparent; font-weight:700;
-      cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; transition:.2s ease;
-    }
+    .btn{ position: relative; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 18px; border-radius:14px; border:1px solid transparent; font-weight:700; cursor:pointer; user-select:none; transition:.2s ease; }
     .btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none !important; box-shadow:none !important }
     .btn-primary{ color:#fff; background: linear-gradient(90deg, var(--accent1), var(--accent2)); box-shadow: 0 10px 24px rgba(124,77,255,0.35) }
     .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 30px rgba(124,77,255,0.5) }
-    .btn-primary:active{ transform: translateY(0); box-shadow: 0 8px 16px rgba(124,77,255,0.3) }
-
     .btn-outline{ color:#dfe5ff; background: transparent; border-color: rgba(255,255,255,0.16) }
     .btn-outline:hover{ border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); transform: translateY(-2px) }
-    .btn-outline:active{ transform: translateY(0) }
-
     .btn-ghost{ color:#e6e8f0; background: rgba(255,255,255,0.02) }
     .btn-ghost:hover{ background: rgba(255,255,255,0.06); transform: translateY(-2px) }
-    .btn-ghost:active{ transform: translateY(0) }
 
-    /* Special CTA buttons */
-    .btn-cta{
-      background: linear-gradient(90deg,#00d4ff,#7c4dff);
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: 0 8px 26px rgba(0,212,255,0.25), inset 0 0 0 1px rgba(255,255,255,0.06);
-      color: #fff;
-    }
-    .btn-cta .mini{
-      font-size:.74rem; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(0,0,0,0.25)
-    }
-
-    /* Toast (Urdu capable) */
+    /* Toast */
     .toast{
       position: fixed; left:50%; bottom:26px; transform: translateX(-50%) translateY(16px);
       background: rgba(0, 10, 18, 0.78); color:#eaffff; border:1px solid rgba(10, 211, 167, 0.45);
       border-radius:14px; padding:12px 16px; z-index: 9999; min-width: 280px; max-width:92vw;
       box-shadow: 0 0 16px rgba(10,211,167,0.35), inset 0 0 20px rgba(10,211,167,0.12);
-      backdrop-filter: blur(10px); font-family: "Noto Nastaliq Urdu","Poppins",sans-serif; direction: rtl;
+      backdrop-filter: blur(10px);
       opacity:0; pointer-events:none; transition:.3s
     }
     .toast.error{ border-color: rgba(255, 107, 107, 0.55); box-shadow: 0 0 16px rgba(255,107,107,0.35), inset 0 0 20px rgba(255,107,107,0.12) }
     .toast.show{ opacity:1; transform: translateX(-50%) translateY(0) }
 
-    /* Currency */
-    .rate-box{
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 14px;
-      line-height: 1.5;
-      min-height: 72px;
+    /* Quick-link box */
+    .quick-links{ display:flex; gap:10px; flex-wrap:wrap; }
+    .qbtn{
+      background: rgba(0,212,255,0.12); border:1px solid rgba(0,212,255,0.35);
+      color:#dff9ff; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:700;
     }
-    .rate-main{ font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
-    .rate-sub{ color: var(--muted); font-size: .92rem; }
+    .qbtn:hover{ transform: translateY(-2px) }
 
-    /* --- LOGIN OVERLAY --- */
-    #loginOverlay{
-      position: fixed; inset:0; z-index: 99999; display:flex; align-items:center; justify-content:center;
-      background:
-        radial-gradient(1200px 800px at 70% 30%, rgba(124,77,255,0.18), transparent 60%),
-        radial-gradient(900px 700px at 20% 75%, rgba(0,212,255,0.14), transparent 60%),
-        #0b1020;
+    @media (max-width: 900px){
+      .grid{ grid-template-columns:1fr }
+      .wrap{ padding:20px 12px }
     }
-    .login-card{
-      width:min(92vw, 420px);
-      background: rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.16);
-      border-radius: 22px;
-      padding: 22px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.04);
-      position: relative;
-      overflow:hidden;
-    }
-    .login-card::before{
-      content:""; position:absolute; inset:-30% -30% auto auto; width:360px; height:360px;
-      background: conic-gradient(from 90deg, rgba(0,212,255,0.5), rgba(124,77,255,0.6), rgba(255,43,214,0.5), rgba(0,212,255,0.5));
-      filter: blur(30px); opacity:.35; transform: rotate(8deg);
-      pointer-events:none;
-    }
-    .login-head{ display:flex; align-items:center; gap:10px; margin-bottom:6px }
-    .logo-dot{ width:12px; height:12px; border-radius:50%; background:linear-gradient(90deg,#00d4ff,#ff2bd6); box-shadow:0 0 18px rgba(0,212,255,0.65) }
-    .login-title{ margin:0; font-size: clamp(20px, 3.6vw, 26px); font-weight:800; letter-spacing:.4px }
-    .login-sub{ margin:0 0 14px; color:var(--muted); font-size:.95rem }
-    .login-row{ display:flex; gap:10px; align-items:center }
-    .login-row input{ flex:1 }
-    .showpw{ cursor:pointer; user-select:none; font-size:.85rem; color:#cfe8ff; opacity:.9 }
-    .cred-hint{ font-size:.86rem; color:#b8cde2; background: rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.14);
-      padding:8px 10px; border-radius:12px; margin-top:8px }
-    .login-actions{ display:flex; gap:10px; margin-top:12px; justify-content:flex-end }
-
-    @media (max-width: 900px){ .grid{ grid-template-columns:1fr } .wrap{ padding:20px 12px } }
   </style>
 </head>
 <body>
-  <!-- LOGIN OVERLAY (appears first) -->
-  <div id="loginOverlay" aria-modal="true" role="dialog">
-    <div class="login-card">
-      <div class="login-head">
-        <span class="logo-dot"></span>
-        <h2 class="login-title">SEO Tracker Agency — Login</h2>
-      </div>
-      <p class="login-sub">Enter admin credentials to continue.</p>
-      <label for="loginEmail">Email</label>
-      <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="username" />
-      <label for="loginPass" style="margin-top:8px">Password</label>
-      <div class="login-row">
-        <input id="loginPass" type="password" placeholder="••••••" autocomplete="current-password" />
-        <span id="togglePw" class="showpw">Show</span>
-      </div>
-      <div class="cred-hint">Admin: <b>sabaseoexpert36@gmail.com</b> — Pass: <b>123</b></div>
-      <div class="login-actions">
-        <button id="loginBtn" class="btn btn-primary" type="button">Login</button>
-      </div>
-      <div id="loginMsg" class="hint" style="color:#ffb3b3; margin-top:10px;"></div>
-    </div>
-  </div>
-
   <!-- Background -->
   <canvas id="bg"></canvas>
   <div class="veil" aria-hidden="true"></div>
 
-  <div class="wrap" id="appWrap" aria-hidden="true">
+  <div class="wrap">
     <div>
       <h1 class="title">SEO SERVICES</h1>
-      <p class="subtitle">Professional request form • AI tools • Currency • Email Sending • Website Directory</p>
+      <p class="subtitle">Professional request form • AI tools • Currency Converter</p>
+
       <div class="tabs">
         <button class="tab-btn active" data-tab="form">SEO Form</button>
         <button class="tab-btn" data-tab="ocr">OCR</button>
@@ -234,19 +165,18 @@
             <input id="autoreply" name="autoreply" placeholder="Your preferred auto-reply (optional)" />
           </div>
         </div>
-
-       <!-- Email Sending Button -->
-<button onclick="window.open('https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec', '_blank')" 
-        style="background-color:#007BFF; color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; font-size:14px;">
-    Email Sending
-</button>
-
-<!-- Website Directory Button -->
-<button onclick="window.open('https://script.google.com/macros/s/AKfycbyI2NUK6mIrXHa-sAkD4cJIzEXB0GjoCAvXD2RDVv_1-gpkeIyDMfmJRVs3jJn0cpcI/exec', '_blank')" 
-        style="background-color:#17A2B8; color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; font-size:14px;">
-    Website Directory
-</button>
-
+        <div class="actions" style="justify-content:space-between;">
+          <div class="quick-links">
+            <!-- Keep both buttons, no “(app script)” text -->
+            <button type="button" class="qbtn" onclick="window.open('https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec','_blank')">Email Sending</button>
+            <button type="button" class="qbtn" onclick="window.open('https://script.google.com/macros/s/AKfycbyI2NUK6mIrXHa-sAkD4cJIzEXB0GjoCAvXD2RDVv_1-gpkeIyDMfmJRVs3jJn0cpcI/exec','_blank')">Website Directory</button>
+          </div>
+          <div>
+            <button id="submitBtn" class="btn btn-primary" type="submit">Submit Request</button>
+            <button type="reset" class="btn btn-outline">Clear</button>
+          </div>
+        </div>
+      </form>
 
       <!-- OCR -->
       <div id="pane-ocr" class="card pane">
@@ -254,7 +184,7 @@
           <div class="full">
             <label>Image for OCR (PNG/JPG)</label>
             <input id="ocrFile" type="file" accept="image/*" />
-            <div class="hint">Drag & drop or choose an image with text.</div>
+            <div class="hint">Drag & drop or choose an image with text. (Client-side Tesseract)</div>
           </div>
           <div class="full">
             <label>Extracted Text</label>
@@ -262,11 +192,8 @@
           </div>
         </div>
         <div class="actions">
-          <div></div>
-          <div class="right-actions">
-            <button id="btnOcr" class="btn btn-primary" type="button">Run OCR</button>
-            <button id="btnOcrClear" class="btn btn-ghost" type="button">Clear</button>
-          </div>
+          <button id="btnOcr" class="btn btn-primary" type="button">Run OCR</button>
+          <button id="btnOcrClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
@@ -276,7 +203,7 @@
           <div class="full">
             <label>Upload PDF</label>
             <input id="pdfFile" type="file" accept="application/pdf" />
-            <div class="hint">Extract clean text (text-based PDFs recommended).</div>
+            <div class="hint">Extract clean text in your browser using PDF.js.</div>
           </div>
           <div class="full">
             <label>Extracted Text</label>
@@ -284,11 +211,8 @@
           </div>
         </div>
         <div class="actions">
-          <div></div>
-          <div class="right-actions">
-            <button id="btnPdfText" class="btn btn-primary" type="button">Extract Text</button>
-            <button id="btnPdfClear" class="btn btn-ghost" type="button">Clear</button>
-          </div>
+          <button id="btnPdfText" class="btn btn-primary" type="button">Extract Text</button>
+          <button id="btnPdfClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
@@ -302,10 +226,10 @@
           <div>
             <label>Target Language</label>
             <select id="trLang">
-              <option value="Urdu" selected>Urdu</option>
-              <option value="English">English</option>
-              <option value="Arabic">Arabic</option>
-              <option value="Hindi">Hindi</option>
+              <option value="ur" selected>Urdu</option>
+              <option value="en">English</option>
+              <option value="ar">Arabic</option>
+              <option value="hi">Hindi</option>
             </select>
           </div>
           <div class="full">
@@ -314,15 +238,12 @@
           </div>
         </div>
         <div class="actions">
-          <div></div>
-          <div class="right-actions">
-            <button id="btnTranslate" class="btn btn-primary" type="button">Translate</button>
-            <button id="btnTrClear" class="btn btn-ghost" type="button">Clear</button>
-          </div>
+          <button id="btnTranslate" class="btn btn-primary" type="button">Translate</button>
+          <button id="btnTrClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
-      <!-- CURRENCY (HTML) -->
+      <!-- CURRENCY CONVERTER -->
       <div id="pane-currency" class="card pane">
         <div class="grid">
           <div>
@@ -337,18 +258,18 @@
             <label for="ccTo">Target currency / مطلوبہ کرنسی</label>
             <select id="ccTo"></select>
           </div>
-          <div class="full rate-box">
-            <div id="ccResult" class="rate-main">Enter amount and convert.</div>
-            <div id="ccRateInfo" class="rate-sub"></div>
+          <div class="full" style="background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:14px;">
+            <div id="ccResult" style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px;">Enter amount and convert.</div>
+            <div id="ccRateInfo" style="color: var(--muted); font-size: .92rem;"></div>
           </div>
         </div>
-        <div class="actions">
-          <div class="hint">Live rates via exchangerate.host</div>
-          <div class="right-actions">
+        <div class="actions" style="justify-content:space-between;">
+          <div>
             <button id="ccConvert" class="btn btn-primary" type="button">Convert</button>
             <button id="ccSwap" class="btn btn-outline" type="button">Swap</button>
             <button id="ccClear" class="btn btn-ghost" type="button">Clear</button>
           </div>
+          <div class="hint">Live rates via exchangerate.host (fallbacks included)</div>
         </div>
       </div>
 
@@ -359,75 +280,10 @@
 
   <!-- App logic -->
   <script>
-    /* ====== CONFIG ====== */
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec"; // OCR/Translate/PDF/SEO form
-    const EMAIL_SENDING_URL = "https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec";
-    const WEBSITE_DIR_URL   = "https://script.google.com/macros/s/AKfycbyI2NUK6mIrXHa-sAkD4cJIzEXB0GjoCAvXD2RDVv_1-gpkeIyDMfmJRVs3jJn0cpcI/exec";
-    const TARGET_GH_URL     = "https://sabahameednoor-source.github.io/webapp-seo/";
+    // CONFIG — Apps Script only for SEO form submit
+    const GAS_WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
 
-    /* ====== LOGIN GATE ====== */
-    const loginOverlay = document.getElementById('loginOverlay');
-    const appWrap = document.getElementById('appWrap');
-    const loginBtn = document.getElementById('loginBtn');
-    const loginMsg = document.getElementById('loginMsg');
-    const loginEmail = document.getElementById('loginEmail');
-    const loginPass = document.getElementById('loginPass');
-    const togglePw = document.getElementById('togglePw');
-
-    function hideOverlay(){
-      loginOverlay.style.display = 'none';
-      appWrap.removeAttribute('aria-hidden');
-      document.body.style.overflow = 'auto';
-    }
-    function showOverlay(){
-      loginOverlay.style.display = 'flex';
-      appWrap.setAttribute('aria-hidden','true');
-      document.body.style.overflow = 'hidden';
-    }
-
-    // On load: show overlay unless already authed this session
-    (function initAuth(){
-      if (sessionStorage.getItem('authOK') === '1') {
-        // Already authed: if we are on the target page, just reveal; if not, go there.
-        if (location.href.startsWith(TARGET_GH_URL)) {
-          hideOverlay();
-        } else {
-          location.href = TARGET_GH_URL;
-        }
-      } else {
-        showOverlay();
-      }
-    })();
-
-    togglePw.addEventListener('click', ()=>{
-      const typ = loginPass.type === 'password' ? 'text' : 'password';
-      loginPass.type = typ;
-      togglePw.textContent = typ === 'password' ? 'Show' : 'Hide';
-    });
-
-    function tryLogin(){
-      loginMsg.textContent = '';
-      const e = (loginEmail.value || '').trim().toLowerCase();
-      const p = (loginPass.value || '').trim();
-      const ok = (e === 'sabaseoexpert36@gmail.com' && p === '123');
-
-      if(ok){
-        sessionStorage.setItem('authOK','1');
-        // If we're not on the GH page, redirect; if we already are, just hide overlay.
-        if (!location.href.startsWith(TARGET_GH_URL)) {
-          location.href = TARGET_GH_URL;
-        } else {
-          hideOverlay();
-        }
-      }else{
-        loginMsg.textContent = 'Invalid email or password.';
-      }
-    }
-    loginBtn.addEventListener('click', tryLogin);
-    loginEmail.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); tryLogin(); }});
-    loginPass.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); tryLogin(); }});
-
-    /* ====== Tabs ====== */
+    // Tabs logic
     const tabs = document.querySelectorAll('.tab-btn');
     const panes = {
       form: document.getElementById('seoForm'),
@@ -445,7 +301,7 @@
       });
     });
 
-    /* ====== Toast ====== */
+    // Toast
     const toastEl = document.getElementById('toast');
     function showToast(msg, type='ok', ms=3400){
       toastEl.textContent = msg;
@@ -455,14 +311,14 @@
       showToast._t = setTimeout(()=> toastEl.classList.remove('show'), ms);
     }
 
-    /* ====== Helpers ====== */
+    // POST FormData to Apps Script (SEO form)
     async function postFD(fd){
       const res = await fetch(GAS_WEB_APP_URL, { method:'POST', body: fd });
       if(!res.ok){ throw new Error(await res.text()); }
       return res.json();
     }
 
-    /* ====== SEO FORM submit ====== */
+    // SEO FORM
     const form = document.getElementById('seoForm'), submitBtn = document.getElementById('submitBtn');
     form.addEventListener('submit', async (e)=>{
       e.preventDefault(); submitBtn.disabled = true; const old = submitBtn.textContent; submitBtn.textContent = 'Submitting...';
@@ -475,47 +331,76 @@
       finally{ submitBtn.disabled = false; submitBtn.textContent = old; }
     });
 
-    /* ====== OCR ====== */
+    /* =========================
+       OCR — Client-side (Tesseract)
+       ========================= */
     const ocrFile = document.getElementById('ocrFile'), ocrOut = document.getElementById('ocrOut');
     document.getElementById('btnOcr').addEventListener('click', async ()=>{
       if(!ocrFile.files[0]) return showToast('براہ کرم تصویر منتخب کریں', 'error');
-      ocrOut.textContent = 'Processing...';
+      ocrOut.textContent = 'Processing... (Tesseract OCR)';
       try{
-        const fd = new FormData(); fd.append('action','ocr'); fd.append('file', ocrFile.files[0]);
-        const { text } = await postFD(fd);
-        ocrOut.textContent = text || '(no text found)';
-      }catch(e){ ocrOut.textContent=''; showToast('OCR ناکام رہا۔', 'error'); }
+        const { data } = await Tesseract.recognize(ocrFile.files[0], 'eng'); // need Urdu? use 'eng+urd' if traineddata added
+        ocrOut.textContent = (data && data.text) ? data.text.trim() : '(no text found)';
+      }catch(e){
+        console.error(e);
+        ocrOut.textContent=''; showToast('OCR ناکام رہا۔', 'error');
+      }
     });
     document.getElementById('btnOcrClear').addEventListener('click', ()=>{ ocrFile.value=''; ocrOut.textContent=''; });
 
-    /* ====== PDF → TEXT ====== */
+    /* =========================
+       PDF → TEXT — Client-side (PDF.js)
+       ========================= */
     const pdfFile = document.getElementById('pdfFile'), pdfOut = document.getElementById('pdfOut');
     document.getElementById('btnPdfText').addEventListener('click', async ()=>{
       if(!pdfFile.files[0]) return showToast('براہ کرم PDF منتخب کریں', 'error');
       pdfOut.value = 'Extracting...';
       try{
-        const fd = new FormData(); fd.append('action','pdftext'); fd.append('file', pdfFile.files[0]);
-        const { text } = await postFD(fd);
-        pdfOut.value = text || '(no text found)';
-      }catch(e){ pdfOut.value=''; showToast('PDF extraction ناکام رہا۔', 'error'); }
+        const arrayBuf = await pdfFile.files[0].arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+        let fullText = '';
+        for(let p=1; p<=pdf.numPages; p++){
+          const page = await pdf.getPage(p);
+          const content = await page.getTextContent();
+          const strings = content.items.map(i=>('str' in i ? i.str : i.toString()));
+          fullText += strings.join(' ') + '\n\n';
+        }
+        pdfOut.value = fullText.trim() || '(no text found)';
+      }catch(e){
+        console.error(e);
+        pdfOut.value=''; showToast('PDF extraction ناکام رہا۔', 'error');
+      }
     });
     document.getElementById('btnPdfClear').addEventListener('click', ()=>{ pdfFile.value=''; pdfOut.value=''; });
 
-    /* ====== TRANSLATE ====== */
+    /* =========================
+       Translate — LibreTranslate public API
+       ========================= */
     document.getElementById('btnTranslate').addEventListener('click', async ()=>{
       const text = document.getElementById('trSrc').value.trim();
-      const targetLang = document.getElementById('trLang').value;
+      const target = document.getElementById('trLang').value; // 'ur','en','ar','hi'
       if(!text) return showToast('متن درکار ہے', 'error');
       const out = document.getElementById('trOut'); out.value = 'Translating...';
       try{
-        const fd = new FormData(); fd.append('action','translate'); fd.append('text', text); fd.append('targetLang', targetLang);
-        const { result } = await postFD(fd);
-        out.value = result || '';
-      }catch(e){ out.value=''; showToast('ترجمہ ناکام رہا۔', 'error'); }
+        const res = await fetch('https://libretranslate.de/translate', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify({ q:text, source:'auto', target:target, format:'text' })
+        });
+        const data = await res.json();
+        out.value = data?.translatedText || '';
+      }catch(e){
+        console.error(e);
+        out.value=''; showToast('ترجمہ ناکام رہا۔', 'error');
+      }
     });
-    document.getElementById('btnTrClear').addEventListener('click', ()=>{ document.getElementById('trSrc').value=''; document.getElementById('trOut').value=''; });
+    document.getElementById('btnTrClear').addEventListener('click', ()=>{
+      document.getElementById('trSrc').value=''; document.getElementById('trOut').value='';
+    });
 
-    /* ====== Currency (HTML) ====== */
+    /* =========================
+       Currency — client-side with fallbacks
+       ========================= */
     const currencyList = [
       ['USD','US Dollar'], ['PKR','Pakistani Rupee'], ['EUR','Euro'], ['GBP','British Pound'],
       ['INR','Indian Rupee'], ['AED','UAE Dirham'], ['SAR','Saudi Riyal'], ['AUD','Australian Dollar'],
@@ -554,32 +439,39 @@
       const min = zeroish.includes(code) ? 0 : 2;
       return new Intl.NumberFormat(undefined, { minimumFractionDigits: min, maximumFractionDigits: 4 }).format(n);
     }
+
     async function fetchJSON(url, ms = 8000){
-      const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), ms);
+      const ctl = new AbortController();
+      const t = setTimeout(()=>ctl.abort(), ms);
       try{
         const res = await fetch(url, { signal: ctl.signal, cache:'no-store' });
         if(!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.json();
       } finally { clearTimeout(t); }
     }
+
     async function getRate(from, to){
       try{
         const u = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
-        const d = await fetchJSON(u); const rate = d?.info?.rate; const date = d?.date;
+        const d = await fetchJSON(u);
+        const rate = d?.info?.rate; const date = d?.date;
         if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/convert' };
-      }catch(e){}
+      }catch{}
       try{
         const u = `https://api.exchangerate.host/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)}`;
-        const d = await fetchJSON(u); const rate = d?.rates?.[to]; const date = d?.date;
+        const d = await fetchJSON(u);
+        const rate = d?.rates?.[to]; const date = d?.date;
         if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/latest' };
-      }catch(e){}
+      }catch{}
       try{
         const u = `https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`;
-        const d = await fetchJSON(u); const rate = d?.rates?.[to]; const date = d?.time_last_update_utc || '';
+        const d = await fetchJSON(u);
+        const rate = d?.rates?.[to]; const date = d?.time_last_update_utc || '';
         if (typeof rate === 'number') return { rate, date, src: 'open.er-api.com' };
-      }catch(e){}
+      }catch{}
       throw new Error('No provider returned a valid rate');
     }
+
     async function convertNow(){
       const amount = parseFloat(ccAmount.value);
       const from = ccFrom.value; const to = ccTo.value;
@@ -589,7 +481,8 @@
         ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(amount, to)} ${to}`;
         ccRateInfo.textContent = `1 ${from} = 1 ${to}`; return;
       }
-      if (!navigator.onLine) { showToast('انٹرنیٹ کنکشن موجود نہیں', 'error'); return; }
+      if (!navigator.onLine) return showToast('انٹرنیٹ کنکشن موجود نہیں', 'error');
+
       ccConvert.disabled = true; const old = ccConvert.textContent; ccConvert.textContent = 'Converting...';
       ccResult.textContent = 'Fetching live rate...'; ccRateInfo.textContent = '';
       try{
@@ -600,9 +493,7 @@
       }catch(err){
         ccResult.textContent = 'Conversion failed.'; ccRateInfo.textContent = '';
         showToast('Currency conversion میں مسئلہ آیا۔ بعد میں دوبارہ کوشش کریں۔', 'error');
-      }finally{
-        ccConvert.disabled = false; ccConvert.textContent = old;
-      }
+      }finally{ ccConvert.disabled = false; ccConvert.textContent = old; }
     }
     ccConvert.addEventListener('click', convertNow);
     ccSwap.addEventListener('click', ()=>{ const f = ccFrom.value; ccFrom.value = ccTo.value; ccTo.value = f; if (ccAmount.value) convertNow(); });
@@ -638,6 +529,7 @@
       positions[i*3+2] = r*Math.cos(p);
     }
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
     const material = new THREE.PointsMaterial({ color:0xbfe9ff, size:0.9, sizeAttenuation:true, transparent:true, opacity:.9 });
     const stars = new THREE.Points(geometry, material);
     scene.add(stars);
@@ -645,11 +537,11 @@
 
     const animate=()=>{ requestAnimationFrame(animate); stars.rotation.y += 0.0008; stars.rotation.x -= 0.0002; renderer.render(scene, camera) };
     animate();
-
     addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight) }, {passive:true});
   </script>
 </body>
 </html>
+
 
 
 
