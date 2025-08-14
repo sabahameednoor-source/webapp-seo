@@ -1,870 +1,139 @@
-<!doctype html>
-<html lang="en" dir="ltr">
+
+   <!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>SEO SERVICES — AI Tools + Currency Converter</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <title>SEO Tracker Agency</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    :root{
-      --bg:#0b1020; --card: rgba(255,255,255,0.06); --stroke: rgba(255,255,255,0.16);
-      --txt:#e7f2ff; --muted:#a9bfd6; --accent1:#00d4ff; --accent2:#7c4dff; --accent3:#ff2bd6; --ok:#0ad3a7; --err:#ff6b6b;
-      color-scheme: dark; /* ensure native controls render for dark UI */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    *{box-sizing:border-box} html,body{height:100%}
-    body{
-      margin:0; color:var(--txt); background:var(--bg);
-      font-family:"Poppins",system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      overflow:auto;
+    .container {
+      display: flex;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      max-width: 900px;
+      width: 100%;
     }
-
-    /* Background */
-    #bg{ position:fixed; inset:0; z-index:0 }
-    .veil{ position:fixed; inset:0; z-index:0; background:
-      radial-gradient(1200px 800px at 70% 30%, rgba(124,77,255,0.12), transparent 60%),
-      radial-gradient(900px 700px at 20% 75%, rgba(0,212,255,0.10), transparent 60%) }
-
-    /* Layout */
-    .wrap{ position:relative; z-index:1; min-height:100vh; display:grid; grid-template-rows:auto 1fr; gap:14px; padding:32px 16px; }
-    .title{ margin:0; font-weight:800; letter-spacing:.5px; font-size: clamp(24px, 4vw, 34px);
-      background: linear-gradient(90deg, var(--accent1), var(--accent3), var(--accent2));
-      -webkit-background-clip:text; background-clip:text; color: transparent; text-transform: uppercase; }
-    .subtitle{ margin:4px 0 0; color:var(--muted); font-size:.98rem }
-
-    /* Tabs */
-    .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px }
-    .tab-btn{ background: rgba(255,255,255,0.06); border:1px solid var(--stroke); color:var(--txt);
-      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; transition:.2s }
-    .tab-btn:hover{ transform: translateY(-2px); border-color: rgba(0,212,255,0.45); background: rgba(0,212,255,0.10) }
-    .tab-btn:active{ transform: translateY(0) }
-    .tab-btn.active{ background: linear-gradient(90deg, rgba(0,212,255,0.18), rgba(124,77,255,0.18)); border-color: rgba(0,212,255,0.45) }
-
-    /* Panes */
-    .panes{ margin-top:12px }
-    .pane{ display:none }
-    .pane.active{ display:block }
-
-    .card{ width:100%; max-width:1060px; margin:0 auto; padding:24px; border-radius:18px; background:var(--card); border:1px solid var(--stroke);
-      backdrop-filter: blur(12px) saturate(130%); box-shadow: 0 12px 36px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.02); position:relative; overflow:hidden }
-
-    .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px }
-    .full{ grid-column: 1/-1 }
-
-    label{ display:block; margin:0 0 8px; font-size:.92rem; color:#d6e8ff }
-    .hint{ font-size:.8rem; color:var(--muted); margin-top:6px }
-
-    input, select, textarea{
-      width:100%; color:var(--txt); background: rgba(255,255,255,0.07);
-      border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:12px 14px; outline:none; transition:.25s ease; font-size:.98rem
+    .info {
+      flex: 1;
+      padding: 30px;
+      background: rgba(0, 0, 0, 0.3);
     }
-    textarea{ min-height:110px; resize: vertical }
-    input::placeholder, textarea::placeholder{ color:#9ab4c9 }
-    input:focus, select:focus, textarea:focus{
-      border-color: rgba(0,212,255,0.75); box-shadow: 0 0 0 3px rgba(0,212,255,0.25), inset 0 0 8px rgba(0,212,255,0.18); transform: translateY(-1px)
+    .info h2 {
+      color: #ff9800;
+      margin-bottom: 15px;
     }
-
-    /* Dropdown visibility fixes */
-    /* Make sure dropdown list items are visible on dark UI across browsers */
-    select {
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      background-color: rgba(255,255,255,0.07);
-      color: var(--txt);
-      -webkit-text-fill-color: var(--txt); /* Safari */
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    .info ul {
+      list-style: none;
+      padding: 0;
     }
-    /* Color the popup options (supported in most Chromium/Firefox) */
-    select option,
-    select optgroup {
-      background-color: #0f162b;
-      color: var(--txt);
+    .info li {
+      margin-bottom: 10px;
+      padding-left: 20px;
+      position: relative;
     }
-    /* Hover/selected visibility */
-    select option:hover,
-    select option:checked,
-    select option:focus {
-      background-color: #1a253c;
-      color: #ffffff;
+    .info li::before {
+      content: "✔";
+      position: absolute;
+      left: 0;
+      color: #ff9800;
     }
-
-    .actions{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; margin-top:8px }
-
-    /* Buttons */
-    .btn{
-      position: relative; display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 18px; border-radius:14px; border:1px solid transparent; font-weight:700;
-      cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; transition:.2s ease;
+    .login-box {
+      flex: 1;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
     }
-    .btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none !important; box-shadow:none !important }
-    .btn-primary{ color:#fff; background: linear-gradient(90deg, var(--accent1), var(--accent2)); box-shadow: 0 10px 24px rgba(124,77,255,0.35) }
-    .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 30px rgba(124,77,255,0.5) }
-    .btn-primary:active{ transform: translateY(0); box-shadow: 0 8px 16px rgba(124,77,255,0.3) }
-
-    .btn-outline{ color:#dfe5ff; background: transparent; border-color: rgba(255,255,255,0.16) }
-    .btn-outline:hover{ border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); transform: translateY(-2px) }
-    .btn-outline:active{ transform: translateY(0) }
-
-    .btn-ghost{ color:#e6e8f0; background: rgba(255,255,255,0.02) }
-    .btn-ghost:hover{ background: rgba(255,255,255,0.06); transform: translateY(-2px) }
-    .btn-ghost:active{ transform: translateY(0) }
-
-    /* Toast (Urdu capable) */
-    .toast{
-      position: fixed; left:50%; bottom:26px; transform: translateX(-50%) translateY(16px);
-      background: rgba(0, 10, 18, 0.78); color:#eaffff; border:1px solid rgba(10, 211, 167, 0.45);
-      border-radius:14px; padding:12px 16px; z-index: 9999; min-width: 280px; max-width:92vw;
-      box-shadow: 0 0 16px rgba(10,211,167,0.35), inset 0 0 20px rgba(10,211,167,0.12);
-      backdrop-filter: blur(10px); font-family: "Noto Nastaliq Urdu","Poppins",sans-serif; direction: rtl;
-      opacity:0; pointer-events:none; transition:.3s
+    .login-box h2 {
+      margin-bottom: 20px;
+      text-align: center;
     }
-    .toast.error{ border-color: rgba(255, 107, 107, 0.55); box-shadow: 0 0 16px rgba(255,107,107,0.35), inset 0 0 20px rgba(255,107,107,0.12) }
-    .toast.show{ opacity:1; transform: translateX(-50%) translateY(0) }
-
-    /* Currency (HTML) */
-    .rate-box{
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 14px;
-      line-height: 1.5;
-      min-height: 72px;
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 5px;
     }
-    .rate-main{ font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
-    .rate-sub{ color: var(--muted); font-size: .92rem; }
-
-    @media (max-width: 900px){
-      .grid{ grid-template-columns:1fr }
-      .wrap{ padding:20px 12px }
+    button {
+      background: #ff9800;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #e68900;
+    }
+    #msg {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <!-- Background -->
-  <canvas id="bg"></canvas>
-  <div class="veil" aria-hidden="true"></div>
 
-  <div class="wrap">
-    <div>
-      <h1 class="title">SEO SERVICES</h1>
-      <p class="subtitle">Professional request form • AI tools • Currency Converter</p>
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="form">SEO Form</button>
-        <button class="tab-btn" data-tab="ocr">OCR</button>
-        <button class="tab-btn" data-tab="objects">Objects</button>
-        <button class="tab-btn" data-tab="pdf">PDF → Text</button>
-        <button class="tab-btn" data-tab="translate">Translate</button>
-        <button class="tab-btn" data-tab="summarize">Summarize</button>
-        <button class="tab-btn" data-tab="currency">Currency</button>
-      </div>
-    </div>
-
-    <div class="panes">
-
-      <!-- SEO FORM -->
-      <form id="seoForm" class="card pane active" autocomplete="on">
-        <div class="grid">
-          <div>
-            <label for="name">Name</label>
-            <input id="name" name="name" required placeholder="Your full name" />
-          </div>
-          <div>
-            <label for="contact">Phone No / Email Address</label>
-            <input id="contact" name="contact" required placeholder="+92 3xx xxx xxxx or you@example.com" />
-          </div>
-          <div class="full">
-            <label for="facebook">Facebook ID or Page Link</label>
-            <input id="facebook" name="facebook" type="url" placeholder="https://facebook.com/yourpage" />
-            <div class="hint">Optional — paste your Facebook profile or page URL.</div>
-          </div>
-          <div>
-            <label for="service">Service (You Want From Me)</label>
-            <select id="service" name="service" required>
-              <option value="" disabled selected>Select an SEO service</option>
-              <option>Technical SEO Audit</option>
-              <option>On‑Page Optimization</option>
-              <option>Keyword Research & Mapping</option>
-              <option>Content Strategy & Briefs</option>
-              <option>Link Building & Digital PR</option>
-              <option>Local SEO (GBP + Citations)</option>
-              <option>Site Speed & Core Web Vitals</option>
-              <option>Analytics & Tag Manager Setup</option>
-              <option>Monthly SEO Management</option>
-            </select>
-          </div>
-          <div>
-            <label for="autoreply">Auto Reply</label>
-            <input id="autoreply" name="autoreply" placeholder="Your preferred auto-reply (optional)" />
-          </div>
-        </div>
-        <div class="actions">
-          <button id="submitBtn" class="btn btn-primary" type="submit">Submit Request</button>
-          <button type="reset" class="btn btn-outline">Clear</button>
-        </div>
-      </form>
-
-      <!-- OCR -->
-      <div id="pane-ocr" class="card pane">
-        <div class="grid">
-          <div class="full">
-            <label>Image for OCR (PNG/JPG)</label>
-            <input id="ocrFile" type="file" accept="image/*" />
-            <div class="hint">Drag & drop or choose an image with text.</div>
-          </div>
-          <div class="full">
-            <label>Extracted Text</label>
-            <pre id="ocrOut" style="white-space:pre-wrap;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;min-height:90px;"></pre>
-          </div>
-        </div>
-        <div class="actions">
-          <button id="btnOcr" class="btn btn-primary" type="button">Run OCR</button>
-          <button id="btnOcrClear" class="btn btn-ghost" type="button">Clear</button>
-        </div>
-      </div>
-
-      <!-- OBJECTS -->
-      <div id="pane-objects" class="card pane">
-        <div class="grid">
-          <div class="full">
-            <label>Image for Object Detection</label>
-            <input id="objFile" type="file" accept="image/*" />
-            <div class="hint">Detect objects in your image.</div>
-          </div>
-          <div class="full">
-            <label>Detected Objects</label>
-            <pre id="objOut" style="white-space:pre-wrap;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;min-height:90px;"></pre>
-          </div>
-        </div>
-        <div class="actions">
-          <button id="btnObjects" class="btn btn-primary" type="button">Detect Objects</button>
-          <button id="btnObjClear" class="btn btn-ghost" type="button">Clear</button>
-        </div>
-      </div>
-
-      <!-- PDF → TEXT -->
-      <div id="pane-pdf" class="card pane">
-        <div class="grid">
-          <div class="full">
-            <label>Upload PDF</label>
-            <input id="pdfFile" type="file" accept="application/pdf" />
-            <div class="hint">Extract clean text (text-based PDFs recommended).</div>
-          </div>
-          <div class="full">
-            <label>Extracted Text</label>
-            <textarea id="pdfOut" placeholder="Extracted text will appear here..."></textarea>
-          </div>
-        </div>
-        <div class="actions">
-          <button id="btnPdfText" class="btn btn-primary" type="button">Extract Text</button>
-          <button id="btnPdfClear" class="btn btn-ghost" type="button">Clear</button>
-        </div>
-      </div>
-
-      <!-- TRANSLATE -->
-      <div id="pane-translate" class="card pane">
-        <div class="grid">
-          <div class="full">
-            <label>Source Text</label>
-            <textarea id="trSrc" placeholder="Paste text to translate"></textarea>
-          </div>
-          <div>
-            <label>Target Language</label>
-            <select id="trLang">
-              <option value="Urdu" selected>Urdu</option>
-              <option value="English">English</option>
-              <option value="Arabic">Arabic</option>
-              <option value="Hindi">Hindi</option>
-            </select>
-          </div>
-          <div class="full">
-            <label>Translated</label>
-            <textarea id="trOut" placeholder="Translation will appear here..."></textarea>
-          </div>
-        </div>
-        <div class="actions">
-          <button id="btnTranslate" class="btn btn-primary" type="button">Translate</button>
-          <button id="btnTrClear" class="btn btn-ghost" type="button">Clear</button>
-        </div>
-      </div>
-
-      <!-- SUMMARIZE -->
-      <div id="pane-summarize" class="card pane">
-        <div class="grid">
-          <div class="full">
-            <label>Text to Summarize</label>
-            <textarea id="sumSrc" placeholder="Paste long text or notes to summarize"></textarea>
-          </div>
-          <div>
-            <label>Language</label>
-            <select id="sumLang">
-              <option value="Urdu" selected>Urdu</option>
-              <option value="English">English</option>
-            </select>
-          </div>
-          <div>
-            <label>Style</label>
-            <select id="sumStyle">
-              <option>Bullet points</option>
-              <option>Executive summary</option>
-              <option>Short paragraph</option>
-            </select>
-          </div>
-          <div class="full">
-            <label>Summary</label>
-            <textarea id="sumOut" placeholder="Summary will appear here..."></textarea>
-          </div>
-        </div>
-        <div class="actions">
-          <label class="btn btn-outline" style="position:relative;">
-            PDF → Auto Summary
-            <input id="sumPdfFile" type="file" accept="application/pdf" style="position:absolute; inset:0; opacity:0; cursor:pointer;">
-          </label>
-          <button id="btnSummarize" class="btn btn-primary" type="button">Summarize Text</button>
-          <button id="btnSumClear" class="btn btn-ghost" type="button">Clear</button>
-        </div>
-      </div>
-
-      <!-- CURRENCY CONVERTER — HTML ONLY -->
-      <div id="pane-currency" class="card pane">
-        <div class="grid">
-          <div>
-            <label for="ccAmount">Amount / رقم</label>
-            <input id="ccAmount" type="number" min="0" step="0.01" placeholder="e.g., 100" value="100" />
-          </div>
-          <div>
-            <label for="ccFrom">Source currency / سورس کرنسی</label>
-            <select id="ccFrom"></select>
-          </div>
-          <div>
-            <label for="ccTo">Target currency / مطلوبہ کرنسی</label>
-            <select id="ccTo"></select>
-          </div>
-          <div class="full rate-box">
-            <div id="ccResult" class="rate-main">Enter amount and convert.</div>
-            <div id="ccRateInfo" class="rate-sub"></div>
-          </div>
-        </div>
-        <div class="actions" style="justify-content:space-between;">
-          <div>
-            <button id="ccConvert" class="btn btn-primary" type="button">Convert</button>
-            <button id="ccSwap" class="btn btn-outline" type="button">Swap</button>
-            <button id="ccClear" class="btn btn-ghost" type="button">Clear</button>
-          </div>
-          <div class="hint">Live rates via exchangerate.host — pure HTML + JS</div>
-        </div>
-      </div>
-
-    </div>
+<div class="container">
+  <!-- Left side info -->
+  <div class="info">
+    <h2>Our Features</h2>
+    <ul>
+      <li>Send Daily Bulk Emails to Clients with one click</li>
+      <li>Pitch SEO Companies via email trigger</li>
+      <li>Send Auto Personalized Messages via trigger</li>
+      <li>Check Currency Exchange Rate instantly</li>
+      <li>Send invoices with auto PDF attachment</li>
+      <li>Send up to 150 emails via trigger</li>
+    </ul>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <!-- App logic (non-module) -->
-  <script>
-    // CONFIG — Apps Script for form + AI tools
-    const GAS_WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
-
-    // Tabs logic
-    const tabs = document.querySelectorAll('.tab-btn');
-    const panes = {
-      form: document.getElementById('seoForm'),
-      ocr: document.getElementById('pane-ocr'),
-      objects: document.getElementById('pane-objects'),
-      pdf: document.getElementById('pane-pdf'),
-      translate: document.getElementById('pane-translate'),
-      summarize: document.getElementById('pane-summarize'),
-      currency: document.getElementById('pane-currency'),
-    };
-    tabs.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        tabs.forEach(b=>b.classList.remove('active')); btn.classList.add('active');
-        Object.values(panes).forEach(p=>p.classList.remove('active'));
-        panes[btn.dataset.tab].classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    });
-
-    // Toast
-    const toastEl = document.getElementById('toast');
-    function showToast(msg, type='ok', ms=3400){
-      toastEl.textContent = msg;
-      toastEl.className = 'toast' + (type==='error' ? ' error' : '');
-      toastEl.classList.add('show');
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=> toastEl.classList.remove('show'), ms);
-    }
-
-    // POST FormData to Apps Script
-    async function postFD(fd){
-      const res = await fetch(GAS_WEB_APP_URL, { method:'POST', body: fd });
-      if(!res.ok){ throw new Error(await res.text()); }
-      return res.json();
-    }
-
-    // SEO FORM
-    const form = document.getElementById('seoForm'), submitBtn = document.getElementById('submitBtn');
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault(); submitBtn.disabled = true; const old = submitBtn.textContent; submitBtn.textContent = 'Submitting...';
-      try{
-        const fd = new FormData(form); fd.append('action','save');
-        const res = await postFD(fd);
-        if(res.ok){ showToast('آپ کا فارم کامیابی سے جمع ہو چکا ہے ✅'); form.reset(); }
-        else{ showToast('معذرت! فارم جمع کرنے میں مسئلہ آیا۔', 'error'); }
-      }catch(err){ showToast('نیٹ ورک خرابی۔ براہ کرم اپنا انٹرنیٹ چیک کریں۔', 'error'); }
-      finally{ submitBtn.disabled = false; submitBtn.textContent = old; }
-    });
-
-    // OCR
-    const ocrFile = document.getElementById('ocrFile'), ocrOut = document.getElementById('ocrOut');
-    document.getElementById('btnOcr').addEventListener('click', async ()=>{
-      if(!ocrFile.files[0]) return showToast('براہ کرم تصویر منتخب کریں', 'error');
-      ocrOut.textContent = 'Processing...';
-      try{
-        const fd = new FormData(); fd.append('action','ocr'); fd.append('file', ocrFile.files[0]);
-        const { text } = await postFD(fd);
-        ocrOut.textContent = text || '(no text found)';
-      }catch(e){ ocrOut.textContent=''; showToast('OCR ناکام رہا۔', 'error'); }
-    });
-    document.getElementById('btnOcrClear').addEventListener('click', ()=>{
-      ocrFile.value=''; ocrOut.textContent='';
-    });
-
-    // Objects
-    const objFile = document.getElementById('objFile'), objOut = document.getElementById('objOut');
-    document.getElementById('btnObjects').addEventListener('click', async ()=>{
-      if(!objFile.files[0]) return showToast('براہ کرم تصویر منتخب کریں', 'error');
-      objOut.textContent = 'Detecting...';
-      try{
-        const fd = new FormData(); fd.append('action','objects'); fd.append('file', objFile.files[0]);
-        const { objects } = await postFD(fd);
-        objOut.textContent = JSON.stringify(objects || [], null, 2);
-      }catch(e){ objOut.textContent=''; showToast('Detection ناکام رہا۔', 'error'); }
-    });
-    document.getElementById('btnObjClear').addEventListener('click', ()=>{
-      objFile.value=''; objOut.textContent='';
-    });
-
-    // PDF → Text
-    const pdfFile = document.getElementById('pdfFile'), pdfOut = document.getElementById('pdfOut');
-    document.getElementById('btnPdfText').addEventListener('click', async ()=>{
-      if(!pdfFile.files[0]) return showToast('براہ کرم PDF منتخب کریں', 'error');
-      pdfOut.value = 'Extracting...';
-      try{
-        const fd = new FormData(); fd.append('action','pdftext'); fd.append('file', pdfFile.files[0]);
-        const { text } = await postFD(fd);
-        pdfOut.value = text || '(no text found)';
-      }catch(e){ pdfOut.value=''; showToast('PDF extraction ناکام رہا۔', 'error'); }
-    });
-    document.getElementById('btnPdfClear').addEventListener('click', ()=>{ pdfFile.value=''; pdfOut.value=''; });
-
-    // Translate
-    document.getElementById('btnTranslate').addEventListener('click', async ()=>{
-      const text = document.getElementById('trSrc').value.trim();
-      const targetLang = document.getElementById('trLang').value;
-      if(!text) return showToast('متن درکار ہے', 'error');
-      const out = document.getElementById('trOut'); out.value = 'Translating...';
-      try{
-        const fd = new FormData(); fd.append('action','translate'); fd.append('text', text); fd.append('targetLang', targetLang);
-        const { result } = await postFD(fd);
-        out.value = result || '';
-      }catch(e){ out.value=''; showToast('ترجمہ ناکام رہا۔', 'error'); }
-    });
-    document.getElementById('btnTrClear').addEventListener('click', ()=>{
-      document.getElementById('trSrc').value=''; document.getElementById('trOut').value='';
-    });
-
-    // Summarize
-    document.getElementById('btnSummarize').addEventListener('click', async ()=>{
-      const text = document.getElementById('sumSrc').value.trim();
-      const lang = document.getElementById('sumLang').value;
-      const style = document.getElementById('sumStyle').value;
-      if(!text) return showToast('متن درکار ہے', 'error');
-      const out = document.getElementById('sumOut'); out.value = 'Summarizing...';
-      try{
-        const fd = new FormData(); fd.append('action','summarize'); fd.append('text', text); fd.append('lang', lang); fd.append('style', style);
-        const { result } = await postFD(fd);
-        out.value = result || '';
-      }catch(e){ out.value=''; showToast('خلاصہ ناکام رہا۔', 'error'); }
-    });
-    document.getElementById('btnSumClear').addEventListener('click', ()=>{
-      document.getElementById('sumSrc').value=''; document.getElementById('sumOut').value='';
-      document.getElementById('sumLang').value='Urdu'; document.getElementById('sumStyle').value='Bullet points';
-    });
-    document.getElementById('sumPdfFile').addEventListener('change', async (e)=>{
-      const file = e.target.files[0]; if(!file) return;
-      const out = document.getElementById('sumOut'); out.value = 'Summarizing PDF...';
-      try{
-        const lang = document.getElementById('sumLang').value;
-        const style = document.getElementById('sumStyle').value;
-        const fd = new FormData(); fd.append('action','pdfsummary'); fd.append('file', file); fd.append('lang', lang); fd.append('style', style);
-        const { result } = await postFD(fd);
-        out.value = result || '';
-      }catch(err){ out.value=''; showToast('PDF خلاصہ ناکام رہا۔', 'error'); }
-      e.target.value = '';
-    });
-
-    // Currency converter (HTML-based, 20+ currencies) — resilient with fallbacks
-    const currencyList = [
-      ['USD','US Dollar'], ['PKR','Pakistani Rupee'], ['EUR','Euro'], ['GBP','British Pound'],
-      ['INR','Indian Rupee'], ['AED','UAE Dirham'], ['SAR','Saudi Riyal'], ['AUD','Australian Dollar'],
-      ['CAD','Canadian Dollar'], ['CNY','Chinese Yuan'], ['JPY','Japanese Yen'], ['TRY','Turkish Lira'],
-      ['BDT','Bangladeshi Taka'], ['LKR','Sri Lankan Rupee'], ['NPR','Nepalese Rupee'], ['MYR','Malaysian Ringgit'],
-      ['THB','Thai Baht'], ['IDR','Indonesian Rupiah'], ['SEK','Swedish Krona'], ['CHF','Swiss Franc'],
-      ['ZAR','South African Rand'], ['KWD','Kuwaiti Dinar'], ['QAR','Qatari Riyal'], ['OMR','Omani Rial'],
-      ['BHD','Bahraini Dinar'], ['NGN','Nigerian Naira'], ['PHP','Philippine Peso'], ['KRW','South Korean Won']
-    ];
-
-    const ccFrom = document.getElementById('ccFrom');
-    const ccTo = document.getElementById('ccTo');
-    const ccAmount = document.getElementById('ccAmount');
-    const ccResult = document.getElementById('ccResult');
-    const ccRateInfo = document.getElementById('ccRateInfo');
-    const ccConvert = document.getElementById('ccConvert');
-    const ccSwap = document.getElementById('ccSwap');
-    const ccClear = document.getElementById('ccClear');
-
-    function fillCurrencies(){
-      const fill = (el, def) => {
-        el.innerHTML = '';
-        currencyList.forEach(([code, name])=>{
-          const opt = document.createElement('option');
-          opt.value = code; opt.textContent = `${code} — ${name}`;
-          if(code === def) opt.selected = true;
-          el.appendChild(opt);
-        });
-      };
-      fill(ccFrom, 'USD');
-      fill(ccTo, 'PKR');
-    }
-    fillCurrencies();
-
-    function fmtAmount(n, code){
-      if (!isFinite(n)) return '';
-      const zeroish = ['JPY','PKR','IDR','LKR','NPR','BDT','KRW'];
-      const min = zeroish.includes(code) ? 0 : 2;
-      return new Intl.NumberFormat(undefined, { minimumFractionDigits: min, maximumFractionDigits: 4 }).format(n);
-    }
-
-    // Helper: fetch with timeout
-    async function fetchJSON(url, ms = 8000){
-      const ctl = new AbortController();
-      const t = setTimeout(()=>ctl.abort(), ms);
-      try{
-        const res = await fetch(url, { signal: ctl.signal, cache:'no-store' });
-        if(!res.ok) throw new Error(`HTTP ${res.status}`);
-        return await res.json();
-      } finally {
-        clearTimeout(t);
-      }
-    }
-
-    // Get rate with fallbacks
-    async function getRate(from, to){
-      // 1) exchangerate.host convert
-      try{
-        const u = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
-        const d = await fetchJSON(u);
-        const rate = d?.info?.rate;
-        const date = d?.date;
-        if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/convert' };
-        console.warn('convert returned invalid data', d);
-      }catch(e){ console.warn('convert failed', e); }
-
-      // 2) exchangerate.host latest
-      try{
-        const u = `https://api.exchangerate.host/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)}`;
-        const d = await fetchJSON(u);
-        const rate = d?.rates?.[to];
-        const date = d?.date;
-        if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/latest' };
-        console.warn('latest returned invalid data', d);
-      }catch(e){ console.warn('latest failed', e); }
-
-      // 3) open.er-api.com latest
-      try{
-        const u = `https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`;
-        const d = await fetchJSON(u);
-        const rate = d?.rates?.[to];
-        const date = d?.time_last_update_utc || '';
-        if (typeof rate === 'number') return { rate, date, src: 'open.er-api.com' };
-        console.warn('er-api returned invalid data', d);
-      }catch(e){ console.warn('er-api failed', e); }
-
-      throw new Error('No provider returned a valid rate');
-    }
-
-    async function convertNow(){
-      const amount = parseFloat(ccAmount.value);
-      const from = ccFrom.value;
-      const to = ccTo.value;
-
-      if (!Number.isFinite(amount) || amount < 0) return showToast('صحیح رقم درج کریں', 'error');
-      if (!from || !to) return showToast('براہ کرم کرنسی منتخب کریں', 'error');
-      if (from === to) {
-        ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(amount, to)} ${to}`;
-        ccRateInfo.textContent = `1 ${from} = 1 ${to}`;
-        return;
-      }
-      if (!navigator.onLine) {
-        showToast('انٹرنیٹ کنکشن موجود نہیں', 'error');
-        return;
-      }
-
-      ccConvert.disabled = true; const old = ccConvert.textContent; ccConvert.textContent = 'Converting...';
-      ccResult.textContent = 'Fetching live rate...'; ccRateInfo.textContent = '';
-
-      try{
-        const { rate, date, src } = await getRate(from, to);
-        const result = rate * amount;
-        ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(result, to)} ${to}`;
-        ccRateInfo.textContent = `1 ${from} = ${fmtAmount(rate, to)} ${to} • ${date || '—'} • ${src}`;
-      }catch(err){
-        console.error('Conversion error:', err);
-        ccResult.textContent = 'Conversion failed.';
-        ccRateInfo.textContent = '';
-        showToast('Currency conversion میں مسئلہ آیا۔ بعد میں دوبارہ کوشش کریں۔', 'error');
-      }finally{
-        ccConvert.disabled = false; ccConvert.textContent = old;
-      }
-    }
-
-    ccConvert.addEventListener('click', convertNow);
-    ccSwap.addEventListener('click', ()=>{
-      const f = ccFrom.value; ccFrom.value = ccTo.value; ccTo.value = f;
-      if (ccAmount.value) convertNow();
-    });
-    ccClear.addEventListener('click', ()=>{
-      ccAmount.value = '';
-      ccFrom.value = 'USD';
-      ccTo.value = 'PKR';
-      ccResult.textContent = 'Enter amount and convert.';
-      ccRateInfo.textContent = '';
-    });
-    ccAmount.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); convertNow(); } });
-    ccFrom.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
-    ccTo.addEventListener('change', ()=> { if(ccAmount.value) convertNow(); });
-
-    // Demo conversion on load
-    window.addEventListener('load', ()=>{ if (ccAmount.value) convertNow(); });
-  </script>
-
-  <!-- Three.js: ES Module (no deprecation warnings) -->
-  <script type="module">
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-
-    const canvas = document.getElementById('bg');
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(innerWidth, innerHeight);
-    camera.position.z = 60;
-
-    const isMobile = innerWidth < 640;
-    const starCount = isMobile ? 1200 : 2400;
-
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(starCount*3);
-    for(let i=0;i<starCount;i++){
-      const r = 200*Math.cbrt(Math.random());
-      const t = Math.random()*2*Math.PI;
-      const p = Math.acos(2*Math.random()-1);
-      positions[i*3]   = r*Math.sin(p)*Math.cos(t);
-      positions[i*3+1] = r*Math.sin(p)*Math.sin(t);
-      positions[i*3+2] = r*Math.cos(p);
-    }
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-    const material = new THREE.PointsMaterial({
-      color:0xbfe9ff, size:0.9, sizeAttenuation:true, transparent:true, opacity:.9
-    });
-
-    const stars = new THREE.Points(geometry, material);
-    scene.add(stars);
-    scene.fog = new THREE.FogExp2(0x0b1020, 0.0025);
-
-    const animate=()=>{ requestAnimationFrame(animate); stars.rotation.y += 0.0008; stars.rotation.x -= 0.0002; renderer.render(scene, camera) };
-    animate();
-
-    addEventListener('resize', ()=>{
-      camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight)
-    }, {passive:true});
-  </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Tracker Agency</title>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0f2027;
-    color: white;
-    display: flex;
-    height: 100vh;
-  }
-  /* Split screen layout */
-  .left {
-    flex: 1;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 50px;
-  }
-  .left h1 {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 30px;
-  }
-  .step {
-    margin-bottom: 20px;
-  }
-  .step-number {
-    font-size: 26px;
-    font-weight: bold;
-    color: #00e5ff;
-    margin-right: 10px;
-  }
-  .step-text {
-    font-size: 16px;
-    line-height: 1.4;
-  }
-  .step-item {
-    display: flex;
-    align-items: flex-start;
-  }
-
-  /* Right side login */
-  .right {
-    flex: 1;
-    background: radial-gradient(circle at top left, #1a2a3b, #0f2027);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .login-box {
-    background: rgba(255, 255, 255, 0.08);
-    padding: 30px;
-    border-radius: 20px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
-    transform: perspective(1000px) rotateY(10deg);
-    transition: transform 0.3s ease;
-  }
-  .login-box:hover {
-    transform: perspective(1000px) rotateY(0deg);
-  }
-  input {
-    width: 90%;
-    padding: 10px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 5px;
-    outline: none;
-  }
-  button {
-    background: #00e5ff;
-    color: black;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: bold;
-    transition: background 0.3s;
-  }
-  button:hover {
-    background: #00c2d6;
-  }
-  #msg {
-    margin-top: 10px;
-    color: red;
-  }
-  @media (max-width: 768px) {
-    body {
-      flex-direction: column;
-    }
-    .left, .right {
-      flex: none;
-      width: 100%;
-      height: auto;
-    }
-  }
-</style>
-</head>
-<body>
-
-<!-- LEFT SIDE -->
-<div class="left">
-  <h1>SEO Tracker Agency</h1>
-  <div class="step">
-    <div class="step-item">
-      <div class="step-number">1</div>
-      <div class="step-text">Track all your SEO campaigns in one place.</div>
-    </div>
-  </div>
-  <div class="step">
-    <div class="step-item">
-      <div class="step-number">2</div>
-      <div class="step-text">Manage client reports and updates instantly.</div>
-    </div>
-  </div>
-  <div class="step">
-    <div class="step-item">
-      <div class="step-number">3</div>
-      <div class="step-text">Collaborate with your team in real-time.</div>
-    </div>
-  </div>
-</div>
-
-<!-- RIGHT SIDE -->
-<div class="right">
+  <!-- Right side login -->
   <div class="login-box">
-    <input type="email" id="email" placeholder="Email"><br>
-    <input type="password" id="password" placeholder="Password"><br>
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
     <button onclick="login()">Login</button>
     <p id="msg"></p>
   </div>
 </div>
 
 <script>
-function login() {
-  var email = document.getElementById("email").value;
-  var password = document.getElementById("password").value;
+  function login() {
+    var email = document.getElementById("email").value.trim();
+    var password = document.getElementById("password").value.trim();
+    var msg = document.getElementById("msg");
 
-  // Replace this with your actual API or Apps Script endpoint
-  fetch("https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec", {
-    method: "POST",
-    body: JSON.stringify({email: email, password: password}),
-    headers: {"Content-Type": "application/json"}
-  })
-  .then(res => res.json())
-  .then(result => {
-    if (result.status === "success") {
-      if (result.role === "admin") {
-        window.location.href = "https://your-admin-dashboard-url.com";
-      } else if (result.role === "user") {
-        window.location.href = "https://sabahameednoor-source.github.io/webapp-seo/";
-      }
+    if (email === "sabaseoexpert36@gmail.com" && password === "123") {
+      window.location.href = "https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec";
+    } else if (email === "sabahameednoor@gmail.com" && password === "1234") {
+      window.location.href = "https://sabahameednoor-source.github.io/webapp-seo/";
     } else {
-      document.getElementById("msg").innerText = result.message;
+      msg.innerText = "Invalid email or password!";
     }
-  })
-  .catch(err => {
-    document.getElementById("msg").innerText = "Error connecting to server.";
-  });
-}
+  }
 </script>
 
 </body>
 </html>
+
 
 
   
