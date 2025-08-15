@@ -720,21 +720,23 @@
     <button onclick="login()">Login</button>
   </div>
 
-  <script>
-    function login() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+  <!-- آپ کا باقی original HTML code یہاں ویسا ہی ہے -->
 
-      if (email === "sabahameednoor@gmail.com" && password === "1234") {
-        // Redirect to Google Apps Script Form
-        window.location.href = "https://script.google.com/macros/s/AKfycbwJYSwsIh53Zs9tm76DWHPwUGg3va2LST5DkY5sTN0g1v2HttEPBiBgYY43hQrEX30p/exec";
-      } else {
-        alert("Invalid Email or Password! Please try again.");
-      }
-    }
-  </script>
-</body>
-</html>
+<script>
+function login() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  if (email === "sabahameednoor@gmail.com" && password === "1234") {
+    window.location.href = "https://script.google.com/macros/s/AKfycbwJYSwsIh53Zs9tm76DWHPwUGg3va2LST5DkY5sTN0g1v2HttEPBiBgYY43hQrEX30p/exec";
+  } else {
+    alert("Invalid Email or Password!");
+  }
+}
+</script>
+
+<!-- آپ کا باقی original HTML code یہاں ویسا ہی ہے -->
+
 
     
 
