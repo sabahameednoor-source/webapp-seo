@@ -1,1 +1,95 @@
-# webapp-seo
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <title>SEO Tracker Agency — Admin Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0; display: flex; align-items: center; justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0b1020, #203a43);
+      color: #fff; height: 100vh;
+    }
+    .card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      padding: 26px; width: min(90vw, 400px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    h1 { margin: 0 0 6px; font-size: 24px; font-weight: 800; }
+    label { display:block; margin:10px 0 5px; }
+    input {
+      width:100%; padding:10px; border-radius:8px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.1); color:#fff;
+    }
+    button {
+      margin-top:16px; width:100%; padding:12px;
+      background: linear-gradient(90deg,#00d4ff,#7c4dff);
+      border:none; border-radius:10px; color:#fff;
+      font-size:1rem; cursor:pointer;
+    }
+    .err { color: #ff5f5f; margin-top: 10px; }
+    .hint { font-size: 0.85rem; color: #ccc; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>SEO Tracker Agency</h1>
+    <p>Login to access your form</p>
+    <div>
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="you@example.com" required />
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="••••••" required />
+    </div>
+    <div id="msg" class="err"></div>
+    <div class="hint">
+      User1: <b>sabaseoexpert36@gmail.com / 123</b><br/>
+      User2: <b>seoagencyuser@gmail.com / 456</b>
+    </div>
+    <button id="btnLogin">Login</button>
+  </div>
+
+  <script>
+    const USERS = [
+      {
+        email: "sabaseoexpert36@gmail.com",
+        pass: "123",
+        url: "https://script.google.com/macros/s/AKfycbwJYSwsIh53Zs9tm76DWHPwUGg3va2LST5DkY5sTN0g1v2HttEPBiBgYY43hQrEX30p/exec"
+      },
+      {
+        email: "seoagencyuser@gmail.com",
+        pass: "456",
+        url: "https://script.google.com/macros/s/AKfycbxwecvKgrVJJN43CNuIYpJsnuIKUeueh7n8d46467dxQw13_Tyo7-ZSHNmUwYcBHh60/exec"
+      }
+    ];
+
+    const email = document.getElementById('email');
+    const pass = document.getElementById('password');
+    const msg = document.getElementById('msg');
+    const btn = document.getElementById('btnLogin');
+
+    btn.addEventListener('click', () => {
+      msg.textContent = "";
+      const ev = (email.value || "").trim().toLowerCase();
+      const pv = (pass.value || "").trim();
+
+      const user = USERS.find(u => u.email === ev && u.pass === pv);
+      if(user){
+        window.location.href = user.url;
+      } else {
+        msg.textContent = "Invalid email or password!";
+      }
+    });
+  </script>
+
+</body>
+</html>
