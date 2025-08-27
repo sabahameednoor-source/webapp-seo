@@ -2,9 +2,19 @@
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
-  <title>SEO SERVICES — AI Tools + Currency + Email/Directory</title>
+  <title>SEO SERVICES — AI Tools + Currency + Utilities</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- OCR (Tesseract) & PDF.js (client-side) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.min.js"></script>
+  <script>
+    // PDF.js worker (required)
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.js';
+  </script>
 
   <style>
     :root{
@@ -13,7 +23,10 @@
       color-scheme: dark;
     }
     *{box-sizing:border-box} html,body{height:100%}
-    body{ margin:0; color:var(--txt); background:var(--bg); font-family:"Poppins",system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow:auto }
+    body{
+      margin:0; color:var(--txt); background:var(--bg);
+      font-family:"Poppins",system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow:auto;
+    }
 
     /* Background */
     #bg{ position:fixed; inset:0; z-index:0 }
@@ -60,8 +73,7 @@
       border-color: rgba(0,212,255,0.75); box-shadow: 0 0 0 3px rgba(0,212,255,0.25), inset 0 0 8px rgba(0,212,255,0.18); transform: translateY(-1px)
     }
 
-    .actions{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; margin-top:8px }
-    .right-actions{ display:flex; gap:10px; flex-wrap:wrap }
+    .actions{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; margin-top:8px }
 
     /* Buttons */
     .btn{
@@ -72,121 +84,99 @@
     .btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none !important; box-shadow:none !important }
     .btn-primary{ color:#fff; background: linear-gradient(90deg, var(--accent1), var(--accent2)); box-shadow: 0 10px 24px rgba(124,77,255,0.35) }
     .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 30px rgba(124,77,255,0.5) }
-    .btn-primary:active{ transform: translateY(0); box-shadow: 0 8px 16px rgba(124,77,255,0.3) }
-
     .btn-outline{ color:#dfe5ff; background: transparent; border-color: rgba(255,255,255,0.16) }
     .btn-outline:hover{ border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); transform: translateY(-2px) }
-    .btn-outline:active{ transform: translateY(0) }
-
     .btn-ghost{ color:#e6e8f0; background: rgba(255,255,255,0.02) }
     .btn-ghost:hover{ background: rgba(255,255,255,0.06); transform: translateY(-2px) }
-    .btn-ghost:active{ transform: translateY(0) }
 
-    /* Special CTA buttons */
-    .btn-cta{
-      background: linear-gradient(90deg,#00d4ff,#7c4dff);
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: 0 8px 26px rgba(0,212,255,0.25), inset 0 0 0 1px rgba(255,255,255,0.06);
-      color: #fff;
+    /* Quick-link box */
+    .quick-links{ display:flex; gap:10px; flex-wrap:wrap; }
+    .qbtn{
+      background: rgba(0,212,255,0.12); border:1px solid rgba(0,212,255,0.35);
+      color:#dff9ff; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:700;
     }
-    .btn-cta .mini{
-      font-size:.74rem; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(0,0,0,0.25)
-    }
+    .qbtn:hover{ transform: translateY(-2px) }
 
-    /* Toast (Urdu capable) */
+    /* Toast */
     .toast{
       position: fixed; left:50%; bottom:26px; transform: translateX(-50%) translateY(16px);
       background: rgba(0, 10, 18, 0.78); color:#eaffff; border:1px solid rgba(10, 211, 167, 0.45);
       border-radius:14px; padding:12px 16px; z-index: 9999; min-width: 280px; max-width:92vw;
       box-shadow: 0 0 16px rgba(10,211,167,0.35), inset 0 0 20px rgba(10,211,167,0.12);
-      backdrop-filter: blur(10px); font-family: "Noto Nastaliq Urdu","Poppins",sans-serif; direction: rtl;
+      backdrop-filter: blur(10px);
       opacity:0; pointer-events:none; transition:.3s
     }
     .toast.error{ border-color: rgba(255, 107, 107, 0.55); box-shadow: 0 0 16px rgba(255,107,107,0.35), inset 0 0 20px rgba(255,107,107,0.12) }
     .toast.show{ opacity:1; transform: translateX(-50%) translateY(0) }
 
-    /* Currency */
-    .rate-box{
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 14px;
-      line-height: 1.5;
-      min-height: 72px;
+    /* --- TOP LOGIN BAR (Gate Pass) --- */
+    .gate{
+      position:relative;
+      z-index:2;
+      width:100%;
+      border-bottom:1px solid var(--stroke);
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(8px);
     }
-    .rate-main{ font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
-    .rate-sub{ color: var(--muted); font-size: .92rem; }
-
-    /* --- LOGIN OVERLAY --- */
-    #loginOverlay{
-      position: fixed; inset:0; z-index: 99999; display:flex; align-items:center; justify-content:center;
-      background:
-        radial-gradient(1200px 800px at 70% 30%, rgba(124,77,255,0.18), transparent 60%),
-        radial-gradient(900px 700px at 20% 75%, rgba(0,212,255,0.14), transparent 60%),
-        #0b1020;
+    .gate-inner{
+      max-width:1060px; margin:0 auto; padding:12px 16px;
+      display:grid; grid-template-columns: 1fr auto; gap:12px; align-items:center;
     }
-    .login-card{
-      width:min(92vw, 420px);
+    .gate-title{
+      font-weight:700; font-size:1.05rem; letter-spacing:.3px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent3));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .gate-form{
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+      background:rgba(255,255,255,0.04); border:1px solid var(--stroke); padding:8px; border-radius:12px;
+    }
+    .gate-form input, .gate-form select{
       background: rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.16);
-      border-radius: 22px;
-      padding: 22px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.04);
-      position: relative;
-      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.2);
+      padding:10px 12px; border-radius:10px; color:var(--txt);
+      min-width: 150px;
     }
-    .login-card::before{
-      content:""; position:absolute; inset:-30% -30% auto auto; width:360px; height:360px;
-      background: conic-gradient(from 90deg, rgba(0,212,255,0.5), rgba(124,77,255,0.6), rgba(255,43,214,0.5), rgba(0,212,255,0.5));
-      filter: blur(30px); opacity:.35; transform: rotate(8deg);
-      pointer-events:none;
+    .gate-form .btn{ padding:10px 14px; border-radius:10px }
+    .gate-help{ color:var(--muted); font-size:.86rem }
+    @media (max-width:900px){
+      .gate-inner{ grid-template-columns: 1fr; }
+      .gate-title{ margin-bottom:4px }
+      .gate-form{ justify-content:flex-start }
     }
-    .login-head{ display:flex; align-items:center; gap:10px; margin-bottom:6px }
-    .logo-dot{ width:12px; height:12px; border-radius:50%; background:linear-gradient(90deg,#00d4ff,#ff2bd6); box-shadow:0 0 18px rgba(0,212,255,0.65) }
-    .login-title{ margin:0; font-size: clamp(20px, 3.6vw, 26px); font-weight:800; letter-spacing:.4px }
-    .login-sub{ margin:0 0 14px; color:var(--muted); font-size:.95rem }
-    .login-row{ display:flex; gap:10px; align-items:center }
-    .login-row input{ flex:1 }
-    .showpw{ cursor:pointer; user-select:none; font-size:.85rem; color:#cfe8ff; opacity:.9 }
-    .cred-hint{ font-size:.86rem; color:#b8cde2; background: rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.14);
-      padding:8px 10px; border-radius:12px; margin-top:8px }
-    .login-actions{ display:flex; gap:10px; margin-top:12px; justify-content:flex-end }
-
-    @media (max-width: 900px){ .grid{ grid-template-columns:1fr } .wrap{ padding:20px 12px } }
   </style>
 </head>
 <body>
-  <!-- LOGIN OVERLAY (appears first) -->
-  <div id="loginOverlay" aria-modal="true" role="dialog">
-    <div class="login-card">
-      <div class="login-head">
-        <span class="logo-dot"></span>
-        <h2 class="login-title">SEO Tracker Agency — Login</h2>
-      </div>
-      <p class="login-sub">Enter admin credentials to continue.</p>
-      <label for="loginEmail">Email</label>
-      <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="username" />
-      <label for="loginPass" style="margin-top:8px">Password</label>
-      <div class="login-row">
-        <input id="loginPass" type="password" placeholder="••••••" autocomplete="current-password" />
-        <span id="togglePw" class="showpw">Show</span>
-      </div>
-      <div class="cred-hint">Admin: <b>sabaseoexpert36@gmail.com</b> — Pass: <b>123</b></div>
-      <div class="login-actions">
-        <button id="loginBtn" class="btn btn-primary" type="button">Login</button>
-      </div>
-      <div id="loginMsg" class="hint" style="color:#ffb3b3; margin-top:10px;"></div>
-    </div>
-  </div>
-
   <!-- Background -->
   <canvas id="bg"></canvas>
   <div class="veil" aria-hidden="true"></div>
 
-  <div class="wrap" id="appWrap" aria-hidden="true">
+  <!-- ===== GATE PASS (Login at top) ===== -->
+  <div class="gate" id="gateBar">
+    <div class="gate-inner">
+      <div class="gate-title">Access • Gate Pass</div>
+      <form class="gate-form" id="loginForm" onsubmit="return false;">
+        <select id="role">
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+        <input id="loginEmail" type="email" placeholder="Email" autocomplete="username" required>
+        <input id="loginPass" type="password" placeholder="Password" autocomplete="current-password" required>
+        <button id="loginBtn" class="btn btn-primary" type="button">Login</button>
+        <button id="loginClear" class="btn btn-outline" type="button">Clear</button>
+      </form>
+    </div>
+    <div class="gate-inner" style="padding-top:0;">
+      <div class="gate-help">Select <b>Admin</b> or <b>User</b>, then enter email & password to proceed.</div>
+    </div>
+  </div>
+  <!-- ===== /GATE PASS ===== -->
+
+  <div class="wrap">
     <div>
       <h1 class="title">SEO SERVICES</h1>
-      <p class="subtitle">Professional request form • AI tools • Currency • Email Sending • Website Directory</p>
+      <p class="subtitle">Professional request form • AI tools • Currency Converter</p>
+
       <div class="tabs">
         <button class="tab-btn active" data-tab="form">SEO Form</button>
         <button class="tab-btn" data-tab="ocr">OCR</button>
@@ -235,16 +225,13 @@
           </div>
         </div>
 
-        <!-- ACTION BAR (blue box) -->
-        <div class="actions">
-          <div class="hint">Tools</div>
-          <div class="right-actions">
-            <a class="btn btn-cta" id="btnEmailSending" href="https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec" target="_blank" rel="noopener">
-              Email Sending <span class="mini">Apps Script</span>
-            </a>
-            <a class="btn btn-cta" id="btnWebsiteDirectory" href="https://script.google.com/macros/s/AKfycbyI2NUK6mIrXHa-sAkD4cJIzEXB0GjoCAvXD2RDVv_1-gpkeIyDMfmJRVs3jJn0cpcI/exec" target="_blank" rel="noopener">
-              Website Directory <span class="mini">Apps Script</span>
-            </a>
+        <div class="actions" style="justify-content:space-between;">
+          <!-- Blue quick-links box (Email Sending + Website Directory) -->
+          <div class="quick-links">
+            <button type="button" class="qbtn" id="btnEmailSending">Email Sending</button>
+            <button type="button" class="qbtn" id="btnWebsiteDirectory">Website Directory</button>
+          </div>
+          <div>
             <button id="submitBtn" class="btn btn-primary" type="submit">Submit Request</button>
             <button type="reset" class="btn btn-outline">Clear</button>
           </div>
@@ -257,7 +244,7 @@
           <div class="full">
             <label>Image for OCR (PNG/JPG)</label>
             <input id="ocrFile" type="file" accept="image/*" />
-            <div class="hint">Drag & drop or choose an image with text.</div>
+            <div class="hint">Drag & drop or choose an image with text. (Client-side Tesseract)</div>
           </div>
           <div class="full">
             <label>Extracted Text</label>
@@ -265,11 +252,8 @@
           </div>
         </div>
         <div class="actions">
-          <div></div>
-          <div class="right-actions">
-            <button id="btnOcr" class="btn btn-primary" type="button">Run OCR</button>
-            <button id="btnOcrClear" class="btn btn-ghost" type="button">Clear</button>
-          </div>
+          <button id="btnOcr" class="btn btn-primary" type="button">Run OCR</button>
+          <button id="btnOcrClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
@@ -279,7 +263,7 @@
           <div class="full">
             <label>Upload PDF</label>
             <input id="pdfFile" type="file" accept="application/pdf" />
-            <div class="hint">Extract clean text (text-based PDFs recommended).</div>
+            <div class="hint">Extract clean text in your browser using PDF.js.</div>
           </div>
           <div class="full">
             <label>Extracted Text</label>
@@ -287,11 +271,8 @@
           </div>
         </div>
         <div class="actions">
-          <div></div>
-          <div class="right-actions">
-            <button id="btnPdfText" class="btn btn-primary" type="button">Extract Text</button>
-            <button id="btnPdfClear" class="btn btn-ghost" type="button">Clear</button>
-          </div>
+          <button id="btnPdfText" class="btn btn-primary" type="button">Extract Text</button>
+          <button id="btnPdfClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
@@ -305,10 +286,10 @@
           <div>
             <label>Target Language</label>
             <select id="trLang">
-              <option value="Urdu" selected>Urdu</option>
-              <option value="English">English</option>
-              <option value="Arabic">Arabic</option>
-              <option value="Hindi">Hindi</option>
+              <option value="ur" selected>Urdu</option>
+              <option value="en">English</option>
+              <option value="ar">Arabic</option>
+              <option value="hi">Hindi</option>
             </select>
           </div>
           <div class="full">
@@ -317,15 +298,12 @@
           </div>
         </div>
         <div class="actions">
-          <div></div>
-          <div class="right-actions">
-            <button id="btnTranslate" class="btn btn-primary" type="button">Translate</button>
-            <button id="btnTrClear" class="btn btn-ghost" type="button">Clear</button>
-          </div>
+          <button id="btnTranslate" class="btn btn-primary" type="button">Translate</button>
+          <button id="btnTrClear" class="btn btn-ghost" type="button">Clear</button>
         </div>
       </div>
 
-      <!-- CURRENCY (HTML) -->
+      <!-- CURRENCY CONVERTER -->
       <div id="pane-currency" class="card pane">
         <div class="grid">
           <div>
@@ -340,18 +318,18 @@
             <label for="ccTo">Target currency / مطلوبہ کرنسی</label>
             <select id="ccTo"></select>
           </div>
-          <div class="full rate-box">
-            <div id="ccResult" class="rate-main">Enter amount and convert.</div>
-            <div id="ccRateInfo" class="rate-sub"></div>
+          <div class="full" style="background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:14px;">
+            <div id="ccResult" style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px;">Enter amount and convert.</div>
+            <div id="ccRateInfo" style="color: var(--muted); font-size: .92rem;"></div>
           </div>
         </div>
-        <div class="actions">
-          <div class="hint">Live rates via exchangerate.host</div>
-          <div class="right-actions">
+        <div class="actions" style="justify-content:space-between;">
+          <div>
             <button id="ccConvert" class="btn btn-primary" type="button">Convert</button>
             <button id="ccSwap" class="btn btn-outline" type="button">Swap</button>
             <button id="ccClear" class="btn btn-ghost" type="button">Clear</button>
           </div>
+          <div class="hint">Live rates via exchangerate.host (fallbacks included)</div>
         </div>
       </div>
 
@@ -362,75 +340,28 @@
 
   <!-- App logic -->
   <script>
-    /* ====== CONFIG ====== */
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec"; // OCR/Translate/PDF/SEO form
+    /* =========================
+       CONFIG
+       ========================= */
+    // Apps Script (SEO form submit ONLY)
+    const GAS_WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbySkc4aqZTvDzOVH6LNM4x-JPl0yVEYhrdzh4ZhLJedYN9VHoJSO4-yjmLtSAKFBGlSKw/exec";
+
+    // Gate Pass routing
+    const ADMIN_EMAIL = "sabaseoexpert36@gmail.com";
+    const ADMIN_PASS  = "123";
+    const ADMIN_REDIRECT = "https://sabahameednoor-source.github.io/webapp-seo/";
+
+    const USER_EMAIL = "sabahameednoor@gmail.com";
+    const USER_PASS  = "1234";
+    const USER_REDIRECT = "https://script.google.com/macros/s/AKfycbwJYSwsIh53Zs9tm76DWHPwUGg3va2LST5DkY5sTN0g1v2HttEPBiBgYY43hQrEX30p/exec";
+
+    // Quick link targets
     const EMAIL_SENDING_URL = "https://script.google.com/macros/s/AKfycbzp6kpGvd_CoU4P1hpCWJ7FBw1zcrIO-WO-bDEYhAT12QUbWQeXS5EBP9aOQ6I2cj_h/exec";
     const WEBSITE_DIR_URL   = "https://script.google.com/macros/s/AKfycbyI2NUK6mIrXHa-sAkD4cJIzEXB0GjoCAvXD2RDVv_1-gpkeIyDMfmJRVs3jJn0cpcI/exec";
-    const TARGET_GH_URL     = "https://sabahameednoor-source.github.io/webapp-seo/";
 
-    /* ====== LOGIN GATE ====== */
-    const loginOverlay = document.getElementById('loginOverlay');
-    const appWrap = document.getElementById('appWrap');
-    const loginBtn = document.getElementById('loginBtn');
-    const loginMsg = document.getElementById('loginMsg');
-    const loginEmail = document.getElementById('loginEmail');
-    const loginPass = document.getElementById('loginPass');
-    const togglePw = document.getElementById('togglePw');
-
-    function hideOverlay(){
-      loginOverlay.style.display = 'none';
-      appWrap.removeAttribute('aria-hidden');
-      document.body.style.overflow = 'auto';
-    }
-    function showOverlay(){
-      loginOverlay.style.display = 'flex';
-      appWrap.setAttribute('aria-hidden','true');
-      document.body.style.overflow = 'hidden';
-    }
-
-    // On load: show overlay unless already authed this session
-    (function initAuth(){
-      if (sessionStorage.getItem('authOK') === '1') {
-        // Already authed: if we are on the target page, just reveal; if not, go there.
-        if (location.href.startsWith(TARGET_GH_URL)) {
-          hideOverlay();
-        } else {
-          location.href = TARGET_GH_URL;
-        }
-      } else {
-        showOverlay();
-      }
-    })();
-
-    togglePw.addEventListener('click', ()=>{
-      const typ = loginPass.type === 'password' ? 'text' : 'password';
-      loginPass.type = typ;
-      togglePw.textContent = typ === 'password' ? 'Show' : 'Hide';
-    });
-
-    function tryLogin(){
-      loginMsg.textContent = '';
-      const e = (loginEmail.value || '').trim().toLowerCase();
-      const p = (loginPass.value || '').trim();
-      const ok = (e === 'sabaseoexpert36@gmail.com' && p === '123');
-
-      if(ok){
-        sessionStorage.setItem('authOK','1');
-        // If we're not on the GH page, redirect; if we already are, just hide overlay.
-        if (!location.href.startsWith(TARGET_GH_URL)) {
-          location.href = TARGET_GH_URL;
-        } else {
-          hideOverlay();
-        }
-      }else{
-        loginMsg.textContent = 'Invalid email or password.';
-      }
-    }
-    loginBtn.addEventListener('click', tryLogin);
-    loginEmail.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); tryLogin(); }});
-    loginPass.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); tryLogin(); }});
-
-    /* ====== Tabs ====== */
+    /* =========================
+       Tabs logic
+       ========================= */
     const tabs = document.querySelectorAll('.tab-btn');
     const panes = {
       form: document.getElementById('seoForm'),
@@ -448,7 +379,9 @@
       });
     });
 
-    /* ====== Toast ====== */
+    /* =========================
+       Toast
+       ========================= */
     const toastEl = document.getElementById('toast');
     function showToast(msg, type='ok', ms=3400){
       toastEl.textContent = msg;
@@ -458,14 +391,68 @@
       showToast._t = setTimeout(()=> toastEl.classList.remove('show'), ms);
     }
 
-    /* ====== Helpers ====== */
+    /* =========================
+       Gate Pass — Login handling
+       ========================= */
+    const roleSel = document.getElementById('role');
+    const emailInp = document.getElementById('loginEmail');
+    const passInp  = document.getElementById('loginPass');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginClr = document.getElementById('loginClear');
+
+    function doLogin(){
+      const role = roleSel.value;
+      const email = (emailInp.value || '').trim().toLowerCase();
+      const pass  = passInp.value || '';
+
+      if(!email || !pass){
+        showToast('Email aur Password darj karein.', 'error');
+        return;
+      }
+
+      // Admin route
+      if(role === 'admin'){
+        if(email === ADMIN_EMAIL && pass === ADMIN_PASS){
+          // Redirect to GitHub SEO page
+          window.location.href = ADMIN_REDIRECT;
+        }else{
+          showToast('Admin credentials ghalat hain.', 'error');
+        }
+        return;
+      }
+
+      // User route
+      if(role === 'user'){
+        if(email === USER_EMAIL && pass === USER_PASS){
+          // Redirect to App Script form
+          window.location.href = USER_REDIRECT;
+        }else{
+          showToast('User credentials ghalat hain.', 'error');
+        }
+        return;
+      }
+    }
+
+    loginBtn.addEventListener('click', doLogin);
+    loginClr.addEventListener('click', ()=>{ emailInp.value=''; passInp.value=''; emailInp.focus(); });
+    [emailInp, passInp].forEach(el => el.addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); doLogin(); } }));
+
+    /* =========================
+       Quick-link buttons
+       ========================= */
+    document.getElementById('btnEmailSending').addEventListener('click', ()=> window.open(EMAIL_SENDING_URL,'_blank'));
+    document.getElementById('btnWebsiteDirectory').addEventListener('click', ()=> window.open(WEBSITE_DIR_URL,'_blank'));
+
+    /* =========================
+       POST FormData to Apps Script (SEO form)
+       ========================= */
     async function postFD(fd){
       const res = await fetch(GAS_WEB_APP_URL, { method:'POST', body: fd });
       if(!res.ok){ throw new Error(await res.text()); }
       return res.json();
     }
 
-    /* ====== SEO FORM submit ====== */
+    // SEO FORM
     const form = document.getElementById('seoForm'), submitBtn = document.getElementById('submitBtn');
     form.addEventListener('submit', async (e)=>{
       e.preventDefault(); submitBtn.disabled = true; const old = submitBtn.textContent; submitBtn.textContent = 'Submitting...';
@@ -478,47 +465,77 @@
       finally{ submitBtn.disabled = false; submitBtn.textContent = old; }
     });
 
-    /* ====== OCR ====== */
+    /* =========================
+       OCR — Client-side (Tesseract)
+       ========================= */
     const ocrFile = document.getElementById('ocrFile'), ocrOut = document.getElementById('ocrOut');
     document.getElementById('btnOcr').addEventListener('click', async ()=>{
       if(!ocrFile.files[0]) return showToast('براہ کرم تصویر منتخب کریں', 'error');
-      ocrOut.textContent = 'Processing...';
+      ocrOut.textContent = 'Processing... (Tesseract OCR)';
       try{
-        const fd = new FormData(); fd.append('action','ocr'); fd.append('file', ocrFile.files[0]);
-        const { text } = await postFD(fd);
-        ocrOut.textContent = text || '(no text found)';
-      }catch(e){ ocrOut.textContent=''; showToast('OCR ناکام رہا۔', 'error'); }
+        const { data } = await Tesseract.recognize(ocrFile.files[0], 'eng'); // need Urdu? change to 'eng+urd' if traineddata available
+        ocrOut.textContent = (data && data.text) ? data.text.trim() : '(no text found)';
+      }catch(e){
+        console.error(e);
+        ocrOut.textContent=''; showToast('OCR ناکام رہا۔', 'error');
+      }
     });
     document.getElementById('btnOcrClear').addEventListener('click', ()=>{ ocrFile.value=''; ocrOut.textContent=''; });
 
-    /* ====== PDF → TEXT ====== */
+    /* =========================
+       PDF → TEXT — Client-side (PDF.js)
+       ========================= */
     const pdfFile = document.getElementById('pdfFile'), pdfOut = document.getElementById('pdfOut');
     document.getElementById('btnPdfText').addEventListener('click', async ()=>{
       if(!pdfFile.files[0]) return showToast('براہ کرم PDF منتخب کریں', 'error');
       pdfOut.value = 'Extracting...';
       try{
-        const fd = new FormData(); fd.append('action','pdftext'); fd.append('file', pdfFile.files[0]);
-        const { text } = await postFD(fd);
-        pdfOut.value = text || '(no text found)';
-      }catch(e){ pdfOut.value=''; showToast('PDF extraction ناکام رہا۔', 'error'); }
+        const arrayBuf = await pdfFile.files[0].arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+        let fullText = '';
+        for(let p=1; p<=pdf.numPages; p++){
+          const page = await pdf.getPage(p);
+          const content = await page.getTextContent();
+          const strings = content.items.map(i=>('str' in i ? i.str : i.toString()));
+          fullText += strings.join(' ') + '\n\n';
+        }
+        pdfOut.value = fullText.trim() || '(no text found)';
+      }catch(e){
+        console.error(e);
+        pdfOut.value=''; showToast('PDF extraction ناکام رہا۔', 'error');
+      }
     });
     document.getElementById('btnPdfClear').addEventListener('click', ()=>{ pdfFile.value=''; pdfOut.value=''; });
 
-    /* ====== TRANSLATE ====== */
+    /* =========================
+       Translate — LibreTranslate public API
+       ========================= */
     document.getElementById('btnTranslate').addEventListener('click', async ()=>{
       const text = document.getElementById('trSrc').value.trim();
-      const targetLang = document.getElementById('trLang').value;
+      const target = document.getElementById('trLang').value; // 'ur','en','ar','hi'
       if(!text) return showToast('متن درکار ہے', 'error');
       const out = document.getElementById('trOut'); out.value = 'Translating...';
       try{
-        const fd = new FormData(); fd.append('action','translate'); fd.append('text', text); fd.append('targetLang', targetLang);
-        const { result } = await postFD(fd);
-        out.value = result || '';
-      }catch(e){ out.value=''; showToast('ترجمہ ناکام رہا۔', 'error'); }
+        const res = await fetch('https://libretranslate.de/translate', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify({ q:text, source:'auto', target:target, format:'text' })
+        });
+        const data = await res.json();
+        out.value = data?.translatedText || '';
+      }catch(e){
+        console.error(e);
+        out.value=''; showToast('ترجمہ ناکام رہا۔', 'error');
+      }
     });
-    document.getElementById('btnTrClear').addEventListener('click', ()=>{ document.getElementById('trSrc').value=''; document.getElementById('trOut').value=''; });
+    document.getElementById('btnTrClear').addEventListener('click', ()=>{
+      document.getElementById('trSrc').value='';
+      document.getElementById('trOut').value='';
+    });
 
-    /* ====== Currency (HTML) ====== */
+    /* =========================
+       Currency — client-side with fallbacks
+       ========================= */
     const currencyList = [
       ['USD','US Dollar'], ['PKR','Pakistani Rupee'], ['EUR','Euro'], ['GBP','British Pound'],
       ['INR','Indian Rupee'], ['AED','UAE Dirham'], ['SAR','Saudi Riyal'], ['AUD','Australian Dollar'],
@@ -557,32 +574,39 @@
       const min = zeroish.includes(code) ? 0 : 2;
       return new Intl.NumberFormat(undefined, { minimumFractionDigits: min, maximumFractionDigits: 4 }).format(n);
     }
+
     async function fetchJSON(url, ms = 8000){
-      const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), ms);
+      const ctl = new AbortController();
+      const t = setTimeout(()=>ctl.abort(), ms);
       try{
         const res = await fetch(url, { signal: ctl.signal, cache:'no-store' });
         if(!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.json();
       } finally { clearTimeout(t); }
     }
+
     async function getRate(from, to){
       try{
         const u = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
-        const d = await fetchJSON(u); const rate = d?.info?.rate; const date = d?.date;
+        const d = await fetchJSON(u);
+        const rate = d?.info?.rate; const date = d?.date;
         if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/convert' };
-      }catch(e){}
+      }catch{}
       try{
         const u = `https://api.exchangerate.host/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)}`;
-        const d = await fetchJSON(u); const rate = d?.rates?.[to]; const date = d?.date;
+        const d = await fetchJSON(u);
+        const rate = d?.rates?.[to]; const date = d?.date;
         if (typeof rate === 'number') return { rate, date, src: 'exchangerate.host/latest' };
-      }catch(e){}
+      }catch{}
       try{
         const u = `https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`;
-        const d = await fetchJSON(u); const rate = d?.rates?.[to]; const date = d?.time_last_update_utc || '';
+        const d = await fetchJSON(u);
+        const rate = d?.rates?.[to]; const date = d?.time_last_update_utc || '';
         if (typeof rate === 'number') return { rate, date, src: 'open.er-api.com' };
-      }catch(e){}
+      }catch{}
       throw new Error('No provider returned a valid rate');
     }
+
     async function convertNow(){
       const amount = parseFloat(ccAmount.value);
       const from = ccFrom.value; const to = ccTo.value;
@@ -592,7 +616,8 @@
         ccResult.textContent = `${fmtAmount(amount, from)} ${from} = ${fmtAmount(amount, to)} ${to}`;
         ccRateInfo.textContent = `1 ${from} = 1 ${to}`; return;
       }
-      if (!navigator.onLine) { showToast('انٹرنیٹ کنکشن موجود نہیں', 'error'); return; }
+      if (!navigator.onLine) return showToast('انٹرنیٹ کنکشن موجود نہیں', 'error');
+
       ccConvert.disabled = true; const old = ccConvert.textContent; ccConvert.textContent = 'Converting...';
       ccResult.textContent = 'Fetching live rate...'; ccRateInfo.textContent = '';
       try{
@@ -603,9 +628,7 @@
       }catch(err){
         ccResult.textContent = 'Conversion failed.'; ccRateInfo.textContent = '';
         showToast('Currency conversion میں مسئلہ آیا۔ بعد میں دوبارہ کوشش کریں۔', 'error');
-      }finally{
-        ccConvert.disabled = false; ccConvert.textContent = old;
-      }
+      }finally{ ccConvert.disabled = false; ccConvert.textContent = old; }
     }
     ccConvert.addEventListener('click', convertNow);
     ccSwap.addEventListener('click', ()=>{ const f = ccFrom.value; ccFrom.value = ccTo.value; ccTo.value = f; if (ccAmount.value) convertNow(); });
@@ -641,6 +664,7 @@
       positions[i*3+2] = r*Math.cos(p);
     }
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
     const material = new THREE.PointsMaterial({ color:0xbfe9ff, size:0.9, sizeAttenuation:true, transparent:true, opacity:.9 });
     const stars = new THREE.Points(geometry, material);
     scene.add(stars);
@@ -648,135 +672,11 @@
 
     const animate=()=>{ requestAnimationFrame(animate); stars.rotation.y += 0.0008; stars.rotation.x -= 0.0002; renderer.render(scene, camera) };
     animate();
-
     addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight) }, {passive:true});
   </script>
 </body>
 </html>
-<!doctype html>
-<html lang="en" dir="ltr">
-<head>
-  <meta charset="utf-8" />
-  <title>SEO WebApp — Admin/User Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: #f4f7fa;
-    }
-    /* ===== Login Form ===== */
-    #login-section {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-    }
-    .login-box {
-      background: #fff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      width: 350px;
-      text-align: center;
-    }
-    .login-box h2 {
-      margin-bottom: 20px;
-      color: #2a5298;
-    }
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    .login-box button {
-      background: #2a5298;
-      color: #fff;
-      padding: 12px;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .login-box button:hover {
-      background: #1e3c72;
-    }
-    /* ===== Main Content ===== */
-    #main-content {
-      display: none; /* Hide until login success */
-    }
-  </style>
-</head>
-<body>
-  <!-- ===== Login Form ===== -->
-  <section id="login-section">
-    <div class="login-box">
-      <h2>Login Access</h2>
-      <input type="email" id="email" placeholder="Enter Email" required>
-      <input type="password" id="password" placeholder="Enter Password" required>
-      <button onclick="checkLogin()">Login</button>
-    </div>
-  </section>
 
-  <!-- ===== Main WebApp Content (821 lines of your SEO tools etc.) ===== -->
-  <section id="main-content">
-    <!-- ⚡ Yahan aapka wohi pura SEO WebApp ka 821 line wala code hoga
-         OCR, Translate, PDF→Text, Currency, Website Directory, Email Sending etc.
-         Usko bilkul same rehne do, sirf yeh login system add kiya hai top pe -->
-  </section>
-
-  <script>
-    function checkLogin() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      // Admin Login
-      if (email === "sabaseoexpert36@gmail.com" && password === "123") {
-        window.location.href = "https://sabahameednoor-source.github.io/webapp-seo/";
-        return;
-      }
-
-      // User Login
-      if (email === "sabahameednoor@gmail.com" && password === "1234") {
-        window.location.href = "https://script.google.com/macros/s/AKfycbwJYSwsIh53Zs9tm76DWHPwUGg3va2LST5DkY5sTN0g1v2HttEPBiBgYY43hQrEX30p/exec";
-        return;
-      }
-
-      alert("Invalid Email or Password. Please try again.");
-    }
-  </script>
-</body>
-</html>
-<script>
-  function handleLogin(event) {
-    event.preventDefault();
-
-    var email = document.getElementById("email").value.trim();
-    var password = document.getElementById("password").value.trim();
-
-    // ✅ Admin login → GitHub page
-    if (email === "sabaseoexpert36@gmail.com" && password === "123") {
-      window.location.href = "https://sabahameednoor-source.github.io/webapp-seo/";
-    }
-
-    // ✅ User login → Google App Script form
-    else if (email === "sabahameednoor@gmail.com" && password === "1234") {
-      window.location.href = "https://script.google.com/macros/s/AKfycbwJYSwsIh53Zs9tm76DWHPwUGg3va2LST5DkY5sTN0g1v2HttEPBiBgYY43hQrEX30p/exec";
-    }
-
-    else {
-      alert("❌ Invalid Email or Password!");
-    }
-  }
-</script>
 
 
       
