@@ -755,6 +755,28 @@
   </script>
 </body>
 </html>
+<script>
+  function handleLogin(event) {
+    event.preventDefault();
+
+    var email = document.getElementById("email").value.trim();
+    var password = document.getElementById("password").value.trim();
+
+    // ✅ Admin login → GitHub page
+    if (email === "sabaseoexpert36@gmail.com" && password === "123") {
+      window.location.href = "https://sabahameednoor-source.github.io/webapp-seo/";
+    }
+
+    // ✅ User login → Google App Script form
+    else if (email === "sabahameednoor@gmail.com" && password === "1234") {
+      window.location.href = "https://script.google.com/macros/s/AKfycbwJYSwsIh53Zs9tm76DWHPwUGg3va2LST5DkY5sTN0g1v2HttEPBiBgYY43hQrEX30p/exec";
+    }
+
+    else {
+      alert("❌ Invalid Email or Password!");
+    }
+  }
+</script>
 
 
       
